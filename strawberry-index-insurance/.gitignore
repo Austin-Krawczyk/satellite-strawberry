@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Large rasters exported from Earth Engine: keep locally, too big for GitHub
+data/derived/*.tif
+data/derived/*.tiff
+
+# OS
+Thumbs.db
+.DS_Store
