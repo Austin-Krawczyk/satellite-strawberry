@@ -1,0 +1,12 @@
+# Python 3.11 (CLAUDE.md §10). Versions verified on the project PC, 2026-09-15.
+# matplotlib is held below 3.11: Windows Smart App Control blocked the compiled
+# backend in matplotlib 3.11.2; 3.10.9 loads and renders.
+earthengine-api==1.7.43
+geemap==0.37.2
+geopandas==1.1.4
+rasterio==1.4.4
+pandas==3.0.5
+matplotlib==3.10.9
+folium==0.20.0
+requests==2.34.2
+jupyter==1.1.1

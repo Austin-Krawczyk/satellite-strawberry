@@ -63,7 +63,7 @@ unavailable, stop and report it.
 | Vegetation change | `COPERNICUS/S2_SR_HARMONIZED` | Bands B4, B8, scale 0.0001. Cloud mask with `GOOGLE/CLOUD_SCORE_PLUS/V1/S2_HARMONIZED` (`cs_cdf` > 0.6). |
 | Permanent water mask | `JRC/GSW1_4/GlobalSurfaceWater` | Exclude `occurrence` > 50. |
 | Rain, coarse (PRF-like) | `NOAA/CPC/Precipitation` | Band `precipitation`, mm/day, 0.5°. The product PRF's Rainfall Index most resembles. |
-| Rain, 4 km | `OREGONSTATE/PRISM/AN81d` | Band `ppt`, mm/day. RMA reportedly evaluated PRISM and found it weak; test that claim. |
+| Rain, 4 km | `OREGONSTATE/PRISM/ANd` | Band `ppt`, mm/day. RMA reportedly evaluated PRISM and found it weak; test that claim. Replaces deprecated `AN81d`, which ends 2020-12-30 (see SPEC_CHANGELOG). |
 | Rain, 1 km | `NASA/ORNL/DAYMET_V4` | Band `prcp`, mm/day. |
 | Rain, satellite | `NASA/GPM_L3/IMERG_V07` | Band `precipitation`, mm/hr, half-hourly. Sum × 0.5. |
 | Counties | `TIGER/2018/Counties` | Filter `GEOID` in `['06053','06087']`. |
