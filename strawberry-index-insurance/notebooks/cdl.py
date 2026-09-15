@@ -1,4 +1,4 @@
-"""CDL helpers: download a one-class 0/1 mask on CDL's native 30 m grid as a local GeoTIFF."""
+"""Earth Engine raster downloads on a dataset's native grid, and CDL helpers."""
 from pathlib import Path
 
 import ee
@@ -17,26 +17,24 @@ def cdl_image(year):
     return col.first().select("cropland")
 
 
-def cdl_tif(path, year, bbox_lonlat, class_value=None, n_tiles=6):
-    """uint8 GeoTIFF of CDL `cropland` on CDL's native 30 m grid (EPSG:5070).
+def native_tif(img, path, bbox_lonlat, proj_image=None, n_tiles=6):
+    """Download a single-band uint8 image as a GeoTIFF on the native grid of `proj_image`
+    (default: `img` itself).
 
-    With `class_value`, writes a 0/1 mask for that class instead of the class codes.
     The bbox is split into `n_tiles` west-east strips to stay under Earth Engine's
     50 MB per-request download limit, and the strips are merged. Cached: skips if `path` exists.
     """
     path = Path(path)
     if path.exists():
         return path
-    img = cdl_image(year)
-    proj = img.projection().getInfo()
+    proj = (proj_image or img).projection().getInfo()
     crs = proj.get("crs") or proj["wkt"]
-    mask = img.toByte() if class_value is None else img.eq(class_value).toByte()
 
     w, s, e, n = bbox_lonlat
     edges = np.linspace(w, e, n_tiles + 1)
     parts = []
     for i in range(n_tiles):
-        url = mask.getDownloadURL({
+        url = img.getDownloadURL({
             "region": ee.Geometry.BBox(edges[i], s, edges[i + 1], n),
             "crs": crs, "crs_transform": proj["transform"], "format": "GEO_TIFF",
         })
@@ -60,3 +58,13 @@ def cdl_tif(path, year, bbox_lonlat, class_value=None, n_tiles=6):
         for p in parts:
             p.unlink()
     return path
+
+
+def cdl_tif(path, year, bbox_lonlat, class_value=None, n_tiles=6):
+    """uint8 GeoTIFF of CDL `cropland` on CDL's native 30 m grid (EPSG:5070).
+
+    With `class_value`, writes a 0/1 mask for that class instead of the class codes.
+    """
+    img = cdl_image(year)
+    out = img.toByte() if class_value is None else img.eq(class_value).toByte()
+    return native_tif(out, path, bbox_lonlat, proj_image=img, n_tiles=n_tiles)

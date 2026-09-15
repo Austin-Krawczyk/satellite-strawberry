@@ -58,7 +58,8 @@ unavailable, stop and report it.
 
 | Purpose | Dataset | Notes |
 |---|---|---|
-| Strawberry fields | `USDA/NASS/CDL` | Band `cropland`, class **221 = Strawberries**. Use 2022 and 2023. 30 m. |
+| Analysis units | `projects/cropczyk/assets/strawberry_fields_dwr_wy2023` | Uploaded from the DWR WY2023 crop map (see Non-GEE data). All T20 fields in the two counties; `is_unit` marks sequence A fields (§6 step 1). |
+| Strawberry fields, comparison | `USDA/NASS/CDL` | Band `cropland`, class **221 = Strawberries**. Use 2022 and 2023. 30 m. Comparison only since 2026-09-15 (see SPEC_CHANGELOG). |
 | Flood detection | `COPERNICUS/S1_GRD` | IW mode, VV polarization, 10 m. Keep one orbit direction. |
 | Vegetation change | `COPERNICUS/S2_SR_HARMONIZED` | Bands B4, B8, scale 0.0001. Cloud mask with `GOOGLE/CLOUD_SCORE_PLUS/V1/S2_HARMONIZED` (`cs_cdf` > 0.6). |
 | Permanent water mask | `JRC/GSW1_4/GlobalSurfaceWater` | Exclude `occurrence` > 50. |
@@ -70,6 +71,14 @@ unavailable, stop and report it.
 
 **Non-GEE data (download manually, store in `data/raw/`, never modify):**
 
+- **DWR / Land IQ Statewide Crop Mapping** (data.cnra.ca.gov/dataset/statewide-crop-mapping),
+  WY2022 and WY2023 final file geodatabases in `data/raw/dwr_crop_mapping/` (provenance
+  in `SOURCE.md`; zips gitignored). Field-boundary polygons. Strawberries are subclass
+  **T20** in `CROPTYP1`–`CROPTYP4` and `MAIN_CROP`. Peak-NDVI dates are in `ADOY1`–`ADOY4`
+  (WY2023: −92 = 1 Oct 2022 … −1 = 31 Dec 2022, 1 = 1 Jan 2023 … 273 = 30 Sep 2023).
+  There is no planting date. Defines the analysis units. **Not ground truth:** no
+  strawberry-specific accuracy is published, and WY2023 main-crop T20 acreage in the
+  two counties is 132% of the Commission's district projection.
 - **RMA Summary of Business, Cause of Loss files** (rma.usda.gov → Tools & Reports →
   Summary of Business → Cause of Loss). Filter: state CA, counties Monterey and Santa
   Cruz, commodity Strawberries, crop years 2015–2024. Fields of interest: cause of
@@ -89,12 +98,16 @@ Each step ends with a **CHECKPOINT**: produce the artifact, then stop and show i
 The human verifies before the next step starts.
 
 **Step 1 — Analysis units.**
-Rasterize CDL strawberries for 2022 and 2023 in the two counties. Aggregate to
-250 m cells; keep cells with ≥ 60% strawberry pixels in CDL 2023 (provisional; see
-SPEC_CHANGELOG). Keep the both-years set (≥ 60% in 2022 and 2023) as a sensitivity
-check. The final rule is chosen once the flood extent reference is in, from unit
-counts inside and outside the footprint under both rules. Exclude cells touching
-permanent water. Export cell centroids and polygons.
+Units are DWR WY2023 field polygons with strawberries (T20) as the only crop of the
+water year (**sequence A**), in the two counties (DWR `COUNTY`, the county of the
+field centroid). Exclude fields touching permanent water. T20 fields where
+strawberries were followed by another crop (**sequence B**) or planted after one
+(**sequence C**) stay in the unit table, flagged as non-units, with their crop
+sequence and T20 peak-greenness date as attributes; do not filter them away. Upload
+all T20 fields with these attributes as the Earth Engine asset in §5. Report CDL
+2023 cells (250 m, ≥ 60% class 221; 127 units) and the both-years cells (15) as the
+comparison. When the flood extent reference arrives, report unit counts inside and
+outside the footprint for the DWR units, with the CDL cells as comparison.
 CHECKPOINT: map of units over a satellite basemap. Human confirms units are
 strawberry fields, not greenhouses, nurseries, or misclassified lettuce.
 
@@ -112,6 +125,9 @@ Pre composite: median NDVI, Feb 1–Mar 8, 2023, cloud-masked.
 Post composite: median NDVI, Mar 20–Apr 30, 2023, cloud-masked.
 Per unit: ΔNDVI = post − pre. Also record number of clear observations per unit in
 each window, because the post window may be cloud-starved.
+Planned validation, done here and not before: use February 2023 NDVI per field to
+check the assumption that sequence A fields had a planted crop in March 2023; a
+planted field should look different from bare ground.
 CHECKPOINT: ΔNDVI map and a histogram. Note how many units have < 2 clear post
 observations.
 
@@ -141,7 +157,8 @@ Dual trigger: rain **and** image.
 For each product × threshold, and for rain-only vs dual, tabulate against truth:
 hit (pays, loss), miss (no pay, loss), false alarm (pays, no loss),
 correct reject (no pay, no loss). Report counts and rates.
-Output: `data/derived/units.csv` with every per-unit value used.
+Output: `data/derived/units.csv` with every per-unit value used, including the
+flagged sequence B and C fields.
 CHECKPOINT: the four-cell tables. This is the core result.
 
 **Step 7 — Write EXHIBIT.md.** See §8.
@@ -170,8 +187,18 @@ Mirror how RMA justified FIP-SI and HIP-WI. Sections, in order:
 5. Results: the four-cell tables; rain-only vs dual; rainfall-product disagreement.
 6. Basis risk: false-alarm rate (pays without loss) and miss rate (loss without
    pay) for each design, stated plainly.
-7. Limitations: cloud cover, mulch and bare-soil confounds, 250 m units vs bed
-   width, invisibility of internal damage, single event, ground-truth coverage.
+7. Limitations: cloud cover, mulch and bare-soil confounds, 10–30 m pixels vs bed
+   width, invisibility of internal damage, single event, ground-truth coverage, and
+   crop-map uncertainty. For the last, state plainly that neither crop map is
+   ground truth and that the uncertainty propagates into every result: DWR (which
+   defines the units) publishes no strawberry-specific accuracy, and its WY2023
+   main-crop T20 acreage is 132% of the Commission's district projection for a
+   smaller area; DWR `ACRES` is whole-polygon area while the Commission figure is
+   planted acreage, which plausibly explains part of the gap; CDL 2023 places only
+   32.6% of its strawberry area inside DWR T20 fields. Do not resolve this by
+   assuming either source is correct. Also state that sequence A fields having a
+   crop in the ground in March 2023 is agronomic reasoning, not something the data
+   states, and report the Step 3 February NDVI check on it.
 8. What it would take to be rateable: more events, more counties, field-level
    ground truth, possibly commercial 3 m imagery.
 9. Verdict against the kill criteria in §4.
@@ -183,15 +210,18 @@ No adjectives about how promising this is. Numbers and their sources.
 ```
 CLAUDE.md               this file
 SPEC_CHANGELOG.md       any change to scope, dated, one line each
+requirements.txt        pinned package versions
 data/raw/               downloaded inputs, never modified
 data/derived/           outputs of notebooks
 notebooks/
   01_units.ipynb
+  01b_dwr_check.ipynb   DWR vs CDL comparison (report only)
   02_s1_flood.ipynb
   03_s2_ndvi.ipynb
   04_rain.ipynb
   05_truth.ipynb
   06_triggers.ipynb
+  common.py, maps.py, cdl.py, dwr.py, download_dwr_crop_mapping.py   shared helpers
 figures/
 EXHIBIT.md
 ```
