@@ -12,6 +12,10 @@ venv/
 data/derived/*.tif
 data/derived/*.tiff
 
+# DWR / Land IQ crop mapping downloads (~95 MiB each): keep locally; provenance in SOURCE.md
+data/raw/dwr_crop_mapping/*
+!data/raw/dwr_crop_mapping/SOURCE.md
+
 # OS
 Thumbs.db
 .DS_Store

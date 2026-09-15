@@ -15,6 +15,11 @@ from common import CLEAR_CS_CDF, GRID_CRS, S2, S2_CLOUD
 HALO = [pe.withStroke(linewidth=2.5, foreground="black")]
 
 
+def _halo(color):
+    """Contrasting outline: white around dark text, black around light text."""
+    return [pe.withStroke(linewidth=2.5, foreground="white" if color in ("black", "k") else "black")]
+
+
 def s2_basemap(path, bbox_lonlat, scale_m, start, end, max_scene_cloud=10):
     """Cloud-masked Sentinel-2 true-colour median, saved as an RGB GeoTIFF in GRID_CRS.
 
@@ -49,14 +54,14 @@ def add_scale_bar(ax, length_km, loc=(0.05, 0.05), color="white"):
     y0, y1 = ax.get_ylim()
     x, y = x0 + loc[0] * (x1 - x0), y0 + loc[1] * (y1 - y0)
     ax.plot([x, x + length_km * 1000], [y, y], color=color, lw=4,
-            solid_capstyle="butt", path_effects=HALO)
+            solid_capstyle="butt", path_effects=_halo(color))
     ax.text(x + length_km * 500, y + 0.015 * (y1 - y0), f"{length_km:g} km", color=color,
-            ha="center", va="bottom", fontsize=9, fontweight="bold", path_effects=HALO)
+            ha="center", va="bottom", fontsize=9, fontweight="bold", path_effects=_halo(color))
 
 
 def add_north_arrow(ax, loc=(0.94, 0.86), color="white"):
     # In EPSG:3310 grid north is within ~2° of true north across the study area.
     ax.annotate("N", xy=(loc[0], loc[1] + 0.08), xytext=(loc[0], loc[1]),
                 xycoords="axes fraction", ha="center", va="top", color=color,
-                fontsize=12, fontweight="bold", path_effects=HALO,
+                fontsize=12, fontweight="bold", path_effects=_halo(color),
                 arrowprops=dict(arrowstyle="-|>", color=color, lw=2))
