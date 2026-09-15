@@ -35,4 +35,9 @@ RAIN = {
 GRID_CRS = "EPSG:3310"
 CELL_M = 250
 CDL_YEARS = (2022, 2023)
-MIN_STRAWBERRY_FRAC = 0.6
+MIN_STRAWBERRY_FRAC = 0.6         # spec default; unit rule is CDL 2023 only (provisional, SPEC_CHANGELOG)
+CANDIDATE_MIN_FRAC = 0.4          # cache cells >= 40% in either year so thresholds can be compared
+SENSITIVITY_FRACS = (0.4, 0.5, 0.6)
+
+# Approximate town centres, used for map labels and reported distances only
+TOWNS = {"Pajaro": (-121.7427, 36.9041), "Salinas": (-121.6555, 36.6777)}

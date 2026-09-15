@@ -90,8 +90,11 @@ The human verifies before the next step starts.
 
 **Step 1 — Analysis units.**
 Rasterize CDL strawberries for 2022 and 2023 in the two counties. Aggregate to
-250 m cells; keep cells with ≥ 60% strawberry pixels in both years. Exclude cells
-touching permanent water. Export cell centroids and polygons.
+250 m cells; keep cells with ≥ 60% strawberry pixels in CDL 2023 (provisional; see
+SPEC_CHANGELOG). Keep the both-years set (≥ 60% in 2022 and 2023) as a sensitivity
+check. The final rule is chosen once the flood extent reference is in, from unit
+counts inside and outside the footprint under both rules. Exclude cells touching
+permanent water. Export cell centroids and polygons.
 CHECKPOINT: map of units over a satellite basemap. Human confirms units are
 strawberry fields, not greenhouses, nurseries, or misclassified lettuce.
 
