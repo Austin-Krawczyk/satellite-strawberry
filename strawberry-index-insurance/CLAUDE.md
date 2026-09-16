@@ -69,7 +69,7 @@ unavailable, stop and report it.
 | Rain, 4 km | `OREGONSTATE/PRISM/ANd` | Band `ppt`, mm/day. RMA reportedly evaluated PRISM and found it weak; test that claim. Replaces deprecated `AN81d`, which ends 2020-12-30 (see SPEC_CHANGELOG). |
 | Rain, 1 km | `NASA/ORNL/DAYMET_V4` | Band `prcp`, mm/day. |
 | Rain, satellite | `NASA/GPM_L3/IMERG_V07` | Band `precipitation`, mm/hr, half-hourly. Sum × 0.5. |
-| Elevation (Step 2c) | `USGS/3DEP/10m` | 10 m elevation, for the confound test on field position. |
+| Elevation (Step 2c) | `USGS/3DEP/10m_collection` | 10 m elevation, band `elevation`; an ImageCollection, so mosaic it. Replaces deprecated `USGS/3DEP/10m` (see SPEC_CHANGELOG). For the confound test on field position. |
 | River lines (Step 2c) | `WWF/HydroSHEDS/v1/FreeFlowingRivers` | Distance from fields to the Pajaro and Salinas channels. Coarse network; note the limitation. |
 | Counties | `TIGER/2018/Counties` | Filter `GEOID` in `['06053','06087']`. |
 
@@ -240,11 +240,29 @@ planted field should look different from bare ground.
 CHECKPOINT: ΔNDVI map and a histogram. Note how many units have < 2 clear post
 observations.
 
+**Step 3b — The reference units, one by one (run before Step 4).**
+With 18 units in the reference set, the exhibit shows them rather than summarising them.
+- Report each of the 18 units the Step 1c reference places in standing water: inundation fraction
+  on March 15, radar flooded fraction, VV pre and post, ΔNDVI, clear observation counts, elevation,
+  acreage, and which gates fired. Reviewers need to see that the misses are not a handful of edge
+  cases.
+- **Ask why NDVI missed them.** The post window opens on March 20, nine days after the flood, so a
+  fast-growing crop had time to recover before the first observation, and the pre window sits in a
+  wet winter when the crop is small and mostly plastic, leaving little canopy to lose. Report ΔNDVI
+  for those units using the tightest available post windows as well as the spec default, and state
+  whether the miss is a timing artefact or a real absence of signal. **Do not change the spec
+  default**; report both.
+CHECKPOINT: the per-unit table and the timing comparison. Stop before Step 4.
+
 **Step 4 — Rainfall per unit, four products.**
 Event window: Mar 9–14, 2023. For each product, per unit: event total (mm) at the
 unit centroid, and the mean of the grid cell containing it. Also compute the
 Jan 4–16, 2023 total.
 Add CIMIS station totals for comparison.
+**Purpose, narrowed 2026-09-16:** the gauge evidence shows this was a hydraulic failure rather than
+a rainfall-threshold event, so Step 4 tests whether any rainfall product would have triggered on
+these fields at all. That bears on whether a rainfall gate alone is viable even though the imagery
+gate is not.
 CHECKPOINT: table of per-unit event totals across products, and one figure
 showing all four products over the study area. Note the range across products
 for the same unit; that range is the basis risk of the rainfall data itself.
@@ -344,14 +362,22 @@ Mirror how RMA justified FIP-SI and HIP-WI. Sections, in order:
 8. What it would take to be rateable: more events, more counties, field-level
    ground truth, possibly commercial 3 m imagery.
 9. Verdict against the kill criteria in §4. State this plainly, near the front of the section,
-   and do not soften it or bury it under the sensitivity tables: **the specified design — a
-   rainfall trigger confirmed by a radar flood mask — did not work on California strawberries for
-   this event, for two independent reasons.** First, no usable imagery existed at peak inundation
-   from either sensor: no optical acquisition at all for March 11–14, and no radar pass covering
-   the units between March 7 and March 19. Second, plastic mulch makes mulched beds radar-dark, so
+   and do not soften it or bury it under the sensitivity tables.
+   **Primary finding: the imagery gate as specified fails on the fields it most needs to catch.**
+   Of the 18 units the Step 1c reference places in standing water on March 15, the radar gate fires
+   on 3 and the NDVI gate on 3, with 6 caught by either. Fifteen units at 95–100% inundation carry
+   a radar flooded fraction of exactly 0.000 and NDVI changes of −0.02 to −0.11 against a −0.15
+   trigger. The March event is also invisible in the units' seasonal NDVI trajectory. Show those 18
+   units individually (Step 3b) rather than summarising them.
+   **The specified design — a rainfall trigger confirmed by a radar flood mask — therefore did not
+   work on California strawberries for this event.** Two mechanisms explain part of the failure and
+   are secondary to the measurement above. First, no usable imagery existed at peak inundation from
+   either sensor: no optical acquisition at all for March 11–14, and no radar pass covering the
+   units between March 7 and March 19. Second, plastic mulch makes mulched beds radar-dark, so
    flooding raises rather than lowers backscatter and the specified mask cannot fire at any
-   threshold. Both are physical constraints, not parameter choices. A brightening-based rule may be
-   possible but rests on 18 units and a confound that was not eliminated (Step 2c).
+   threshold. **The mulch mechanism explains the radar failure but not the NDVI failure.** Both are
+   physical constraints, not parameter choices. A brightening-based rule may be possible but rests
+   on 18 units and a confound that was not eliminated (Step 2c).
    Report as a positive, reusable result that the mulch effect is itself measurable and
    crop-specific: strawberry fields are about four times as likely as neighbouring lettuce fields
    to read as majority open water in VH before any flooding, in the same acquisitions. That is
@@ -377,6 +403,7 @@ notebooks/
   02_s1_flood.ipynb
   02b_mulch_confound.ipynb
   02c_confound_tests.ipynb
+  03b_reference_units.ipynb
   03_s2_ndvi.ipynb
   04_rain.ipynb
   05_truth.ipynb
