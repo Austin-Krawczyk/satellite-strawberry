@@ -328,6 +328,14 @@ Mirror how RMA justified FIP-SI and HIP-WI. Sections, in order:
    track-dependent and sparse, which together are the operational constraint on any
    imagery-confirmed trigger. State which satellites were flying at the time and how today's
    constellation differs.
+   Include the rainfall result in the results section: **CPC takes only 5 distinct values across
+   all 1,320 fields** and gives the reference and dry units the same median total (79.2 mm), so at
+   the 0.5° grid PRF's Rainfall Index uses, a flooded field and its dry neighbour are the same
+   pixel. Put the best case beside it: Daymet at 100 mm fires on 83% of reference units and 43% of
+   dry ones, still paying 556 fields that never flooded. State that the four products disagree by a
+   median 28.5 mm for the same field (90th percentile 57 mm), comparable to the spacing between the
+   50, 75 and 100 mm thresholds themselves, so **the choice of rainfall product moves the outcome
+   as much as the choice of trigger level — a rating problem independent of basis risk.**
 6. Basis risk: false-alarm rate (pays where no flood was detected in the reference) and miss
    rate (flood in the reference with no payment) for each design, stated plainly as detection
    error against the Step 1c reference, not as loss outcomes.
@@ -363,6 +371,17 @@ Mirror how RMA justified FIP-SI and HIP-WI. Sections, in order:
    flooded, and that the comparison is now flood-corridor fields against fields outside both
    corridors. State that the Sentinel-1 mask comes from the March 19 pass, 8 days after the
    peak, because no earlier pass covered the units.
+   **Product-documentation risk, as a worked example:** the CPC band is stored in 0.1 mm/day, not
+   mm/day. Read unscaled it gave 792 mm for the six-day event and 5,053 mm for calendar 2021 at
+   Pajaro, against 592 mm from PRISM for the same point and year. Undetected, that single error
+   would have produced a confident and wrong conclusion — that the coarse PRF-like product triggers
+   everywhere at any threshold — which is a plausible-sounding statement about grid resolution that
+   was really a units mistake. Anyone building an index on gridded inputs should cross-check
+   products against each other and against physical plausibility before trusting any of them.
+   **The CIMIS station check was not done:** the API requires a personal key that this project did
+   not have, so the gridded products were never cross-checked against ground stations. Their
+   absolute accuracy over these fields is unverified, although the disagreement between them is
+   measured.
 8. What it would take to be rateable: more events, more counties, field-level
    ground truth, possibly commercial 3 m imagery.
 9. Verdict against the kill criteria in §4. State this plainly, near the front of the section,
@@ -395,10 +414,20 @@ Mirror how RMA justified FIP-SI and HIP-WI. Sections, in order:
    threshold. **The mulch mechanism explains the radar failure but not the NDVI failure.** Both are
    physical constraints, not parameter choices. A brightening-based rule may be possible but rests
    on 18 units and a confound that was not eliminated (Step 2c).
+   **The verdict carries three independent failures, each a physical or structural constraint
+   rather than a parameter choice:** (i) no usable imagery existed at peak inundation from either
+   sensor; (ii) the imagery gates confirmed inundation rather than damage and missed 15 of 18
+   visibly flooded fields; (iii) no rainfall threshold in any of four products separated flooded
+   from dry fields, because the water came from a levee failure rather than from rain on the field.
+   The third finding means **this event is the wrong test case for a rainfall index and the right
+   test case for a river stage trigger** — state that as a design recommendation, not as a negative
+   result.
    Report as a positive, reusable result that the mulch effect is itself measurable and
-   crop-specific: strawberry fields are about four times as likely as neighbouring lettuce fields
-   to read as majority open water in VH before any flooding, in the same acquisitions. That is
-   useful to anyone attempting SAR-based monitoring of mulched specialty crops, independent of
+   crop-specific, stating both measured ratios and not conflating them (corrected 2026-09-16):
+   before any flooding, in the same acquisitions, **50.4% of strawberry fields read as majority
+   water-like in VH against 21.2% of neighbouring lettuce fields, a factor of 2.4**, and
+   separately the **median VH water-like fraction is 0.503 against 0.115, a factor of 4.4**. That
+   is useful to anyone attempting SAR-based monitoring of mulched specialty crops, independent of
    insurance.
 
 No adjectives about how promising this is. Numbers and their sources.
