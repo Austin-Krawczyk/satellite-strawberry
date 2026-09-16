@@ -118,18 +118,35 @@ using one to validate the Sentinel-1 analysis would be circular. Naming trap: th
 Disasters service named `california_atmospheric_river_2023` covers only the January
 2023 event (image dates 1/1 through 1/23), not the March breach.
 Build the reference from optical bands only. **Do not use any Sentinel-1 data in this
-step.** With `COPERNICUS/S2_SR_HARMONIZED` and Cloud Score+ masking (`cs_cdf` > 0.6),
-find every Sentinel-2 acquisition over the study area between March 11 and March 25,
-2023 and report the date and clear-pixel fraction of each; the first usable clear pass
-is expected around March 16 or 17. For the clearest post-event scene compute
-NDWI = (B3 − B8)/(B3 + B8) and MNDWI = (B3 − B11)/(B3 + B11) and compare them against a
-pre-event baseline composite from February 1 to March 8, 2023. Produce a candidate
-standing-water mask over the two counties, excluding permanent water
-(`JRC/GSW1_4/GlobalSurfaceWater` occurrence > 50). Export it as a polygon layer to
-`data/derived/` and produce a figure showing the pre-event composite, the post-event
-composite, and the derived water mask over the Pajaro Valley and Salinas Valley. This
-is the independent ground truth reference for Step 2.
-CHECKPOINT: the figure and the acquisition date table. Stop before Step 2.
+step.** With `COPERNICUS/S2_SR_HARMONIZED` and Cloud Score+ masking (`cs_cdf` > 0.6):
+
+1. **Acquisition table**, a standalone result for the exhibit: every Sentinel-2 acquisition
+   over the study area from March 11 to March 25, 2023, with the clear-pixel fraction for
+   the study area, for the Pajaro and northern Salinas valleys, and for the lower Pajaro
+   Valley. It shows that no optical observation exists for March 11–14, when water was at
+   its peak, and that the valleys were 0% clear on March 12 and 17. This is the
+   sensor-availability argument for SAR, stated in our own data rather than asserted.
+2. **Water mask per date** for March 15, 20 and 25, 2023: NDWI = (B3 − B8)/(B3 + B8) and
+   MNDWI = (B3 − B11)/(B3 + B11), compared against a pre-event baseline composite
+   (February 1 – March 8, 2023), excluding permanent water
+   (`JRC/GSW1_4/GlobalSurfaceWater` occurrence > 50).
+3. **The reference is the union of those three dates**, exported to `data/derived/` as a
+   polygon layer, each polygon tagged with the date it was first seen as water. Report it
+   as three nested extents — seen on March 15, added by March 20, added by March 25 — and
+   never as a single number. March 15 is the closest thing to peak extent; the March 25
+   additions are more likely long-standing water or irrigation than flood. For each added
+   extent also report how much of it was cloud-covered on the earlier dates, because both
+   recession and cloud gaps create additions.
+4. **Threshold sensitivity**, reported at this checkpoint: mapped area with the NDWI and
+   MNDWI minima at 0 and at 0.1, the MNDWI rise over baseline at 0.15, 0.2 and 0.25, and
+   the minimum polygon size at 0.1, 0.2 and 0.5 ha. We need to know how much of the
+   reference is a threshold choice before using it to judge the radar.
+5. **Figure:** pre-event composite, the post-event composites, and the union mask coloured
+   by the date first seen, over the Pajaro Valley and Salinas Valley.
+
+This is the independent ground truth reference for Step 2.
+CHECKPOINT: the figure, the acquisition table and the threshold sensitivity. Stop before
+Step 2.
 
 **Step 2 — Sentinel-1 flood mask.**
 Pre window: Feb 1–Mar 8, 2023. Post window: Mar 11–20, 2023. Same orbit direction.
@@ -208,7 +225,10 @@ Mirror how RMA justified FIP-SI and HIP-WI. Sections, in order:
    known weaknesses. This is what expert reviewers read first.
 3. Event and study area.
 4. Method (from §6), one paragraph per step.
-5. Results: the four-cell tables; rain-only vs dual; rainfall-product disagreement.
+5. Results: the four-cell tables; rain-only vs dual; rainfall-product disagreement;
+   and the Step 1c acquisition table (clear-pixel fraction over the valleys by date) as a
+   standalone result, showing that no optical observation exists for March 11–14 when water
+   was at its peak.
 6. Basis risk: false-alarm rate (pays without loss) and miss rate (loss without
    pay) for each design, stated plainly.
 7. Limitations: cloud cover, mulch and bare-soil confounds, 10–30 m pixels vs bed
@@ -222,7 +242,10 @@ Mirror how RMA justified FIP-SI and HIP-WI. Sections, in order:
    32.6% of its strawberry area inside DWR T20 fields. Do not resolve this by
    assuming either source is correct. Also state that sequence A fields having a
    crop in the ground in March 2023 is agronomic reasoning, not something the data
-   states, and report the Step 3 February NDVI check on it. State the limits of the
+   states, and report the Step 3 February NDVI check on it. State that the unit definition
+   rests on DWR's classification plus a visual check by the project owner across a sample,
+   not on grower-confirmed field records; if results hinge on a small number of units, those
+   units are revisited individually. State the limits of the
    Step 1c optical reference: the first clear Sentinel-2 pass is several days after the
    March 10–11 peak, so water has partly receded and the reference under-counts flooded
    area, which biases against this method rather than for it; cloud cover during the peak
