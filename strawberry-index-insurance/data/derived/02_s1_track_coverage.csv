@@ -1,0 +1,6 @@
+pass,rel_orbit,post_date,days_after_peak,pre_scenes,units_covered_post,units_covered_pre,covers_units
+DESCENDING,115,2023-03-12,1,3,7,7,False
+ASCENDING,137,2023-03-14,3,3,6,6,False
+DESCENDING,144,2023-03-14,3,3,0,0,False
+ASCENDING,35,2023-03-19,8,3,1320,1320,True
+DESCENDING,42,2023-03-19,8,3,1320,1320,True
