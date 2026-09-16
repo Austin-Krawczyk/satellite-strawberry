@@ -163,6 +163,13 @@ Per unit: fraction of pixels flooded.
 many units, already show water-like backscatter in the Feb 1 – Mar 8 baseline. That window sits
 in a wet winter that included the January flooding; if the baseline is already wet, the change
 detection understates the March event, and the exhibit must say so.
+**Radar availability, a standalone result:** for the event window list every Sentinel-1
+acquisition over the units — date, relative orbit, orbit direction and the share of units its
+footprint covers — and report the longest gap between usable acquisitions over the unit area.
+State from the data which platforms were operating (Sentinel-1B failed in December 2021 and was
+retired in August 2022, which cut revisit from 6 days to 12; Sentinel-1C launched in December 2024
+and restores two-satellite revisit), so the exhibit can say that a product designed today faces a
+different coverage regime than this event did.
 **River stage:** report peak gage height and discharge for the Pajaro River at Chittenden
 (USGS 11159000) and a Salinas River gauge over the event window, alongside the rainfall totals.
 The breach was a hydraulic failure: water reached those fields because a structure gave way
@@ -173,6 +180,10 @@ strawberry figure in `docs/ground_truth_aggregate.md`. Treat neither as truth; r
 Use the optical reference at index minimum 0.0 as the default and carry the 0.1 variant as a
 **sensitivity band on every agreement figure**, not as a separate table.
 **Framing:** this measures **flood detection**, not loss. There is no field-level loss data.
+**Analysis region:** Sentinel-1 statistics over both counties exceed Earth Engine's interactive
+limits, so area statistics are computed over the Pajaro-to-northern-Salinas valley box. State that
+region's area wherever acreages are reported, so they are never read as two-county totals. Per-unit
+fractions still cover every unit.
 CHECKPOINT: pre image, post image, flood mask, side by side, with the town of
 Pajaro labeled. Human confirms the known breach area shows as flooded and the
 Salinas Valley does not.
@@ -245,10 +256,15 @@ Mirror how RMA justified FIP-SI and HIP-WI. Sections, in order:
 3. Event and study area.
 4. Method (from §6), one paragraph per step.
 5. Results, framed as flood detection performance and not loss prediction: the four-cell
-   tables; rain-only vs dual; rainfall-product disagreement;
-   and the Step 1c acquisition table (clear-pixel fraction over the valleys by date) as a
-   standalone result, showing that no optical observation exists for March 11–14 when water
-   was at its peak.
+   tables; rain-only vs dual; rainfall-product disagreement; and a **sensor-availability
+   section** combining the Step 1c optical acquisition table (clear-pixel fraction over the
+   valleys by date, showing no optical observation for March 11–14 when water was at its peak)
+   with the Step 2 radar availability table (per-acquisition share of units covered, and the
+   longest gap over the unit area). Report this as a finding in its own right, not merely as a
+   limitation of this analysis: optical had no clear view at the peak and radar coverage was
+   track-dependent and sparse, which together are the operational constraint on any
+   imagery-confirmed trigger. State which satellites were flying at the time and how today's
+   constellation differs.
 6. Basis risk: false-alarm rate (pays where no flood was detected in the reference) and miss
    rate (flood in the reference with no payment) for each design, stated plainly as detection
    error against the Step 1c reference, not as loss outcomes.
