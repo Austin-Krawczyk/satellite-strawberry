@@ -23,9 +23,11 @@ never the loss meter. Rot, mold, and internal fruit damage are invisible from or
 **Study area:** Monterey County (FIPS 06053) and Santa Cruz County (FIPS 06087).
 
 **Primary event:** Pajaro River levee breach, night of March 10–11, 2023. Strawberry
-fields near Pajaro and Watsonville flooded; fields in the Salinas Valley a few miles
-away did not. Same county, same storm, same coarse rainfall grid, different outcomes.
-This is a natural experiment for basis risk.
+fields near Pajaro and Watsonville flooded. **Revised 2026-09-16:** the Step 1c optical
+reference shows the Salinas River corridor flooded as well, so Salinas Valley fields are
+not a dry control. The natural experiment is therefore **fields inside a flood corridor
+versus fields outside both the Pajaro and Salinas corridors**, in the same counties, under
+the same storm and the same coarse rainfall grid.
 
 **Secondary events (only if primary completes):** January 4–16, 2023 atmospheric
 rivers (Salinas River flooding); February 2017 storms.
@@ -188,6 +190,29 @@ CHECKPOINT: pre image, post image, flood mask, side by side, with the town of
 Pajaro labeled. Human confirms the known breach area shows as flooded and the
 Salinas Valley does not.
 
+**Step 2b — Mulch confound investigation (run before Step 3).**
+Step 2 found the median unit 50.3% water-like in VH before any flooding, consistent with
+plastic mulch producing specular reflection indistinguishable from standing water at these
+thresholds. That plausibly explains both the weak agreement with the optical reference and
+the fact that only 11 units exceeded the flooded-fraction threshold while the county recorded
+1,919 flooded strawberry acres.
+- Report the **distribution** of baseline water-like fraction across units, VV and VH
+  separately, not just the median, and the same for a comparison set of non-strawberry DWR
+  fields in the same region (lettuce T30, cole crops T4), to show whether the effect is
+  specific to mulched strawberry beds or general to the area.
+- **Test whether the change signal survives:** for units inside the March 15 optical extent
+  versus units outside it, compare the pre-to-post backscatter change rather than the absolute
+  post value, restricted to units with a clear optical view on March 15. If mulch raises the
+  baseline but flooding still lowers backscatter further, the mask definition is wrong rather
+  than the method.
+- If the change signal does not separate the two groups, report that plainly as a negative
+  result against the §4 kill criterion on resolving strawberry beds. **Do not tune thresholds
+  until something appears.**
+- Report how many units fall inside the March 15 optical extent, as the denominator for the
+  Step 2 count of units above the flooded-fraction threshold.
+CHECKPOINT: the distributions, the change-signal comparison and the verdict. Stop before
+Step 3.
+
 **Step 3 — Sentinel-2 vegetation change.**
 Pre composite: median NDVI, Feb 1–Mar 8, 2023, cloud-masked.
 Post composite: median NDVI, Mar 20–Apr 30, 2023, cloud-masked.
@@ -295,6 +320,11 @@ Mirror how RMA justified FIP-SI and HIP-WI. Sections, in order:
    State that in the optical reference the index minimum moves mapped area by about a third
    while the change threshold moves it about 5%, so the reference carries a substantial
    analyst-choice component, reported as a sensitivity band on every agreement figure.
+   State that the original natural-experiment premise (Salinas Valley as a dry control) was
+   revised on 2026-09-16 when the Step 1c optical reference showed the Salinas River corridor
+   flooded, and that the comparison is now flood-corridor fields against fields outside both
+   corridors. State that the Sentinel-1 mask comes from the March 19 pass, 8 days after the
+   peak, because no earlier pass covered the units.
 8. What it would take to be rateable: more events, more counties, field-level
    ground truth, possibly commercial 3 m imagery.
 9. Verdict against the kill criteria in §4.
@@ -316,6 +346,7 @@ notebooks/
   01b_dwr_check.ipynb   DWR vs CDL comparison (report only)
   01c_optical_flood_reference.ipynb
   02_s1_flood.ipynb
+  02b_mulch_confound.ipynb
   03_s2_ndvi.ipynb
   04_rain.ipynb
   05_truth.ipynb
