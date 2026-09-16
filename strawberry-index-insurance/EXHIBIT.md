@@ -4,8 +4,14 @@
 
 Prepared for USDA RMA, Davis Regional Office, and Agralytica.
 Study area: Monterey (06053) and Santa Cruz (06087) counties, California.
-All figures in this exhibit were computed from public data in the notebooks listed in §4;
-every table names its dataset, date window and unit count.
+
+*Analysis by Austin Krawczyk, UC Davis, 16 September 2026. Repository:
+https://github.com/Austin-Krawczyk/CROPCZYK (private; access on request). All inputs are public
+datasets except the aggregate loss figures in `docs/ground_truth_aggregate.md`, which were
+supplied by the author and are used only as order-of-magnitude checks.*
+
+Every figure in this exhibit was computed in the notebooks listed in §4, and every table names
+its dataset, date window and unit count.
 
 > **Stated at the front, because it governs how everything below should be read:** no
 > field-level loss data exists for this event. Units can be classified as flooded or not

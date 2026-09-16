@@ -42,7 +42,18 @@ has not been shared.
    bottom in Google Earth Engine via the Python API.
 2. `figures/` — the six figures in §7.
 3. `data/derived/` — the per-unit table (§6, step 6) as CSV.
-4. `EXHIBIT.md` — ten pages max, structured like an FCIC feasibility exhibit (§8).
+4. `EXHIBIT.md` — structured like an FCIC feasibility exhibit (§8). **Length, revised
+   2026-09-16:** approximately 6,300 words with nine tables, five of them mandatory (the
+   four-cell tables, the 18-unit reference table, the optical acquisition table, the radar
+   coverage table and the dataset table; the other four carry the NDVI timing comparison,
+   the rainfall event totals, the mulch comparison and the basis-risk rates), rendering to
+   about ten pages at 10pt with 0.75-inch margins. Word count
+   and table count are the measures, not a rendered page count. The original ten-page cap was
+   set before the analysis produced its table load; none of the mandated content in §8 is to be
+   cut to meet a page number.
+5. `SUMMARY.md` — one page, three paragraphs, no tables: what was tested, what was found, what
+   it means for an index product, with no caveat beyond the absence of field-level loss data.
+   Read first; the exhibit is checked afterward. Added 2026-09-16.
 
 ## 4. Kill criteria (report these honestly, do not paper over them)
 
