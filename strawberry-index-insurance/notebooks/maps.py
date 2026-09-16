@@ -65,3 +65,28 @@ def add_north_arrow(ax, loc=(0.94, 0.86), color="white"):
                 xycoords="axes fraction", ha="center", va="top", color=color,
                 fontsize=12, fontweight="bold", path_effects=_halo(color),
                 arrowprops=dict(arrowstyle="-|>", color=color, lw=2))
+
+
+def ee_tif(img, path, bbox_lonlat, scale_m, crs=GRID_CRS):
+    """Download an Earth Engine image as a GeoTIFF over bbox_lonlat, in `crs` at `scale_m`.
+
+    For RGB pass an image already run through .visualize(). Cached: skips if `path` exists.
+    Returns (array [H, W] or [H, W, bands], extent) with extent as (left, right, bottom, top).
+    """
+    import numpy as np
+    import rasterio
+    import requests
+
+    path = Path(path)
+    if not path.exists():
+        url = img.getDownloadURL({"region": ee.Geometry.BBox(*bbox_lonlat), "crs": crs,
+                                  "scale": scale_m, "format": "GEO_TIFF"})
+        resp = requests.get(url, timeout=900)
+        if resp.status_code != 200:
+            raise RuntimeError(f"Earth Engine download failed ({resp.status_code}): {resp.text[:500]}")
+        path.write_bytes(resp.content)
+    with rasterio.open(path) as src:
+        arr = src.read()
+        b = src.bounds
+    arr = np.moveaxis(arr, 0, -1) if arr.shape[0] > 1 else arr[0]
+    return arr, (b.left, b.right, b.bottom, b.top)

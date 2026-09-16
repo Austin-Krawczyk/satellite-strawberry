@@ -111,11 +111,35 @@ outside the footprint for the DWR units, with the CDL cells as comparison.
 CHECKPOINT: map of units over a satellite basemap. Human confirms units are
 strawberry fields, not greenhouses, nurseries, or misclassified lettuce.
 
+**Step 1c — Optical flood reference (run before Step 2).**
+No independent flood extent polygon is available for this event. Every ready-made SAR
+flood product (NASA/ASF, Copernicus GFM, ARIA, OPERA) is derived from Sentinel-1, so
+using one to validate the Sentinel-1 analysis would be circular. Naming trap: the NASA
+Disasters service named `california_atmospheric_river_2023` covers only the January
+2023 event (image dates 1/1 through 1/23), not the March breach.
+Build the reference from optical bands only. **Do not use any Sentinel-1 data in this
+step.** With `COPERNICUS/S2_SR_HARMONIZED` and Cloud Score+ masking (`cs_cdf` > 0.6),
+find every Sentinel-2 acquisition over the study area between March 11 and March 25,
+2023 and report the date and clear-pixel fraction of each; the first usable clear pass
+is expected around March 16 or 17. For the clearest post-event scene compute
+NDWI = (B3 − B8)/(B3 + B8) and MNDWI = (B3 − B11)/(B3 + B11) and compare them against a
+pre-event baseline composite from February 1 to March 8, 2023. Produce a candidate
+standing-water mask over the two counties, excluding permanent water
+(`JRC/GSW1_4/GlobalSurfaceWater` occurrence > 50). Export it as a polygon layer to
+`data/derived/` and produce a figure showing the pre-event composite, the post-event
+composite, and the derived water mask over the Pajaro Valley and Salinas Valley. This
+is the independent ground truth reference for Step 2.
+CHECKPOINT: the figure and the acquisition date table. Stop before Step 2.
+
 **Step 2 — Sentinel-1 flood mask.**
 Pre window: Feb 1–Mar 8, 2023. Post window: Mar 11–20, 2023. Same orbit direction.
 Apply 3×3 focal mean (speckle). Per pixel: flooded if
 (post_VV_dB − pre_VV_dB) < −3 **and** post_VV_dB < −15. Mask permanent water.
 Per unit: fraction of pixels flooded.
+Compare the Sentinel-1 flood mask with the Step 1c optical mask and report agreement
+and disagreement in both directions, and flooded unit acreage against the 1,919-acre
+March strawberry figure in `docs/ground_truth_aggregate.md`. Treat neither as truth;
+report both.
 CHECKPOINT: pre image, post image, flood mask, side by side, with the town of
 Pajaro labeled. Human confirms the known breach area shows as flooded and the
 Salinas Valley does not.
@@ -198,7 +222,12 @@ Mirror how RMA justified FIP-SI and HIP-WI. Sections, in order:
    32.6% of its strawberry area inside DWR T20 fields. Do not resolve this by
    assuming either source is correct. Also state that sequence A fields having a
    crop in the ground in March 2023 is agronomic reasoning, not something the data
-   states, and report the Step 3 February NDVI check on it.
+   states, and report the Step 3 February NDVI check on it. State the limits of the
+   Step 1c optical reference: the first clear Sentinel-2 pass is several days after the
+   March 10–11 peak, so water has partly receded and the reference under-counts flooded
+   area, which biases against this method rather than for it; cloud cover during the peak
+   is why no optical observation exists at maximum inundation; and the reference is a
+   water mask derived here, not a surveyed extent, so it carries its own error.
 8. What it would take to be rateable: more events, more counties, field-level
    ground truth, possibly commercial 3 m imagery.
 9. Verdict against the kill criteria in §4.
@@ -213,9 +242,12 @@ SPEC_CHANGELOG.md       any change to scope, dated, one line each
 requirements.txt        pinned package versions
 data/raw/               downloaded inputs, never modified
 data/derived/           outputs of notebooks
+docs/
+  ground_truth_aggregate.md   aggregate loss figures used for sanity checks
 notebooks/
   01_units.ipynb
   01b_dwr_check.ipynb   DWR vs CDL comparison (report only)
+  01c_optical_flood_reference.ipynb
   02_s1_flood.ipynb
   03_s2_ndvi.ipynb
   04_rain.ipynb
