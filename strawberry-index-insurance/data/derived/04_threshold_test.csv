@@ -1,0 +1,13 @@
+product,threshold (mm),reference units over,of reference,dry units over,of dry,all units over
+cpc,50,18,18,1288,1288,1320
+cpc,75,18,18,1284,1288,1316
+cpc,100,0,18,2,1288,2
+prism,50,18,18,1288,1288,1320
+prism,75,15,18,815,1288,838
+prism,100,1,18,369,1288,373
+daymet,50,18,18,1288,1288,1320
+daymet,75,15,18,753,1288,776
+daymet,100,15,18,556,1288,578
+imerg,50,18,18,1288,1288,1320
+imerg,75,0,18,162,1288,162
+imerg,100,0,18,0,1288,0

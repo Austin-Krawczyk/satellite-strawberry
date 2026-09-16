@@ -65,7 +65,7 @@ unavailable, stop and report it.
 | Flood detection | `COPERNICUS/S1_GRD` | IW mode, **VV and VH** polarization, 10 m. Keep one orbit direction, and pair pre with post on the same relative orbit (§6 step 2). |
 | Vegetation change | `COPERNICUS/S2_SR_HARMONIZED` | Bands B4, B8, scale 0.0001. Cloud mask with `GOOGLE/CLOUD_SCORE_PLUS/V1/S2_HARMONIZED` (`cs_cdf` > 0.6). |
 | Permanent water mask | `JRC/GSW1_4/GlobalSurfaceWater` | Exclude `occurrence` > 50. |
-| Rain, coarse (PRF-like) | `NOAA/CPC/Precipitation` | Band `precipitation`, mm/day, 0.5°. The product PRF's Rainfall Index most resembles. |
+| Rain, coarse (PRF-like) | `NOAA/CPC/Precipitation` | Band `precipitation`, **0.1 mm/day — multiply by 0.1 for mm** (corrected 2026-09-16; the catalog states "Daily total precipitation estimate in 0.1 mm"). 0.5°. The product PRF's Rainfall Index most resembles. |
 | Rain, 4 km | `OREGONSTATE/PRISM/ANd` | Band `ppt`, mm/day. RMA reportedly evaluated PRISM and found it weak; test that claim. Replaces deprecated `AN81d`, which ends 2020-12-30 (see SPEC_CHANGELOG). |
 | Rain, 1 km | `NASA/ORNL/DAYMET_V4` | Band `prcp`, mm/day. |
 | Rain, satellite | `NASA/GPM_L3/IMERG_V07` | Band `precipitation`, mm/hr, half-hourly. Sum × 0.5. |
@@ -267,7 +267,11 @@ CHECKPOINT: table of per-unit event totals across products, and one figure
 showing all four products over the study area. Note the range across products
 for the same unit; that range is the basis risk of the rainfall data itself.
 
-**Step 5 — Ground truth.**
+**Step 5 — Ground truth. SKIPPED (decision of 2026-09-16).**
+There is no field-level loss data, so `truth` cannot be assigned as lost or not lost. The Step 1c
+optical reference supplies flooded / not flooded instead, and Step 6 uses it directly. The RMA
+Cause of Loss tabulation stays in scope for the exhibit's context section if time allows.
+Original text, retained for the record:
 Per unit, assign `truth` ∈ {flooded, not_flooded, unknown} from the flood extent
 reference and any grower notes. Record the source for each assignment. Do not infer
 truth from the imagery being tested; that is circular.
@@ -363,12 +367,25 @@ Mirror how RMA justified FIP-SI and HIP-WI. Sections, in order:
    ground truth, possibly commercial 3 m imagery.
 9. Verdict against the kill criteria in §4. State this plainly, near the front of the section,
    and do not soften it or bury it under the sensitivity tables.
-   **Primary finding: the imagery gate as specified fails on the fields it most needs to catch.**
+   **Lead finding, design level: on this event the imagery gate confirmed inundation, not damage.**
+   What the imagery detected was standing water; once the water drained the canopy looked unchanged
+   (Step 3b: the signal decays to 3 of 18 units by March 20 and 1 of 18 by March 25). Inundation is
+   already implied by the weather trigger, so a gate that only re-detects it adds verification cost
+   without adding information about loss. That holds regardless of timing, threshold or sensor, and
+   it generalises beyond strawberries to any peril where the visible signal is the hazard itself
+   rather than its effect on the crop.
+   **Second finding, measurement level: the imagery gate as specified fails on the fields it most
+   needs to catch.**
    Of the 18 units the Step 1c reference places in standing water on March 15, the radar gate fires
    on 3 and the NDVI gate on 3, with 6 caught by either. Fifteen units at 95–100% inundation carry
    a radar flooded fraction of exactly 0.000 and NDVI changes of −0.02 to −0.11 against a −0.15
-   trigger. The March event is also invisible in the units' seasonal NDVI trajectory. Show those 18
-   units individually (Step 3b) rather than summarising them.
+   trigger. The March event is also invisible in the units' seasonal NDVI trajectory. **Include the
+   Step 3b per-unit table in full, not as an excerpt**, and keep the sentence that the radar gate
+   fired on all 3 units where VV fell and on none of the 15 where it rose: that one sentence
+   explains the entire radar failure.
+   **The 18-of-18 figure from the March 15 window must never appear without its circularity
+   caveat:** those units were defined by the March 15 water mask, NDWI shares band B8 with NDVI, so
+   both fall when water covers a field, and that column largely restates the reference definition.
    **The specified design — a rainfall trigger confirmed by a radar flood mask — therefore did not
    work on California strawberries for this event.** Two mechanisms explain part of the failure and
    are secondary to the measurement above. First, no usable imagery existed at peak inundation from
