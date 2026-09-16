@@ -69,6 +69,8 @@ unavailable, stop and report it.
 | Rain, 4 km | `OREGONSTATE/PRISM/ANd` | Band `ppt`, mm/day. RMA reportedly evaluated PRISM and found it weak; test that claim. Replaces deprecated `AN81d`, which ends 2020-12-30 (see SPEC_CHANGELOG). |
 | Rain, 1 km | `NASA/ORNL/DAYMET_V4` | Band `prcp`, mm/day. |
 | Rain, satellite | `NASA/GPM_L3/IMERG_V07` | Band `precipitation`, mm/hr, half-hourly. Sum × 0.5. |
+| Elevation (Step 2c) | `USGS/3DEP/10m` | 10 m elevation, for the confound test on field position. |
+| River lines (Step 2c) | `WWF/HydroSHEDS/v1/FreeFlowingRivers` | Distance from fields to the Pajaro and Salinas channels. Coarse network; note the limitation. |
 | Counties | `TIGER/2018/Counties` | Filter `GEOID` in `['06053','06087']`. |
 
 **Non-GEE data (download manually, store in `data/raw/`, never modify):**
@@ -213,6 +215,20 @@ the fact that only 11 units exceeded the flooded-fraction threshold while the co
 CHECKPOINT: the distributions, the change-signal comparison and the verdict. Stop before
 Step 3.
 
+**Step 2c — Is the brightening a confound? (run before Step 3).**
+Aimed at the confound, not at rescuing the design.
+- **Position rather than flooding?** Across all units, test whether pre-event VV backscatter is
+  explained by distance to the river, elevation and field size, and whether the flooded and dry
+  groups differ on those variables independently of flooding. Repeat the change comparison on dry
+  units matched to the flooded group on elevation and distance. If pre-event brightness is
+  explained by position rather than by flooding, say so plainly.
+- **Does the brightening persist?** Compare the March 19 post value with the March 31 acquisition
+  on the same track. Sediment deposition or damaged mulch should persist for weeks; transient
+  standing water should not. This is a cheap test of the mechanism that 18 units cannot resolve
+  on their own.
+CHECKPOINT: correlations, the matched comparison, the persistence test, and a verdict on whether
+the brightening survives the confound. Stop before Step 3.
+
 **Step 3 — Sentinel-2 vegetation change.**
 Pre composite: median NDVI, Feb 1–Mar 8, 2023, cloud-masked.
 Post composite: median NDVI, Mar 20–Apr 30, 2023, cloud-masked.
@@ -327,7 +343,20 @@ Mirror how RMA justified FIP-SI and HIP-WI. Sections, in order:
    peak, because no earlier pass covered the units.
 8. What it would take to be rateable: more events, more counties, field-level
    ground truth, possibly commercial 3 m imagery.
-9. Verdict against the kill criteria in §4.
+9. Verdict against the kill criteria in §4. State this plainly, near the front of the section,
+   and do not soften it or bury it under the sensitivity tables: **the specified design — a
+   rainfall trigger confirmed by a radar flood mask — did not work on California strawberries for
+   this event, for two independent reasons.** First, no usable imagery existed at peak inundation
+   from either sensor: no optical acquisition at all for March 11–14, and no radar pass covering
+   the units between March 7 and March 19. Second, plastic mulch makes mulched beds radar-dark, so
+   flooding raises rather than lowers backscatter and the specified mask cannot fire at any
+   threshold. Both are physical constraints, not parameter choices. A brightening-based rule may be
+   possible but rests on 18 units and a confound that was not eliminated (Step 2c).
+   Report as a positive, reusable result that the mulch effect is itself measurable and
+   crop-specific: strawberry fields are about four times as likely as neighbouring lettuce fields
+   to read as majority open water in VH before any flooding, in the same acquisitions. That is
+   useful to anyone attempting SAR-based monitoring of mulched specialty crops, independent of
+   insurance.
 
 No adjectives about how promising this is. Numbers and their sources.
 
@@ -347,6 +376,7 @@ notebooks/
   01c_optical_flood_reference.ipynb
   02_s1_flood.ipynb
   02b_mulch_confound.ipynb
+  02c_confound_tests.ipynb
   03_s2_ndvi.ipynb
   04_rain.ipynb
   05_truth.ipynb
