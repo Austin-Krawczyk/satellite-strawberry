@@ -60,7 +60,7 @@ unavailable, stop and report it.
 |---|---|---|
 | Analysis units | `projects/cropczyk/assets/strawberry_fields_dwr_wy2023` | Uploaded from the DWR WY2023 crop map (see Non-GEE data). All T20 fields in the two counties; `is_unit` marks sequence A fields (§6 step 1). |
 | Strawberry fields, comparison | `USDA/NASS/CDL` | Band `cropland`, class **221 = Strawberries**. Use 2022 and 2023. 30 m. Comparison only since 2026-09-15 (see SPEC_CHANGELOG). |
-| Flood detection | `COPERNICUS/S1_GRD` | IW mode, VV polarization, 10 m. Keep one orbit direction. |
+| Flood detection | `COPERNICUS/S1_GRD` | IW mode, **VV and VH** polarization, 10 m. Keep one orbit direction, and pair pre with post on the same relative orbit (§6 step 2). |
 | Vegetation change | `COPERNICUS/S2_SR_HARMONIZED` | Bands B4, B8, scale 0.0001. Cloud mask with `GOOGLE/CLOUD_SCORE_PLUS/V1/S2_HARMONIZED` (`cs_cdf` > 0.6). |
 | Permanent water mask | `JRC/GSW1_4/GlobalSurfaceWater` | Exclude `occurrence` > 50. |
 | Rain, coarse (PRF-like) | `NOAA/CPC/Precipitation` | Band `precipitation`, mm/day, 0.5°. The product PRF's Rainfall Index most resembles. |
@@ -79,6 +79,10 @@ unavailable, stop and report it.
   There is no planting date. Defines the analysis units. **Not ground truth:** no
   strawberry-specific accuracy is published, and WY2023 main-crop T20 acreage in the
   two counties is 132% of the Commission's district projection.
+- **USGS streamflow gauges** (waterservices.usgs.gov): Pajaro River at Chittenden (site
+  11159000) and a Salinas River gauge, event-window gage height and discharge, stored in
+  `data/raw/usgs/` with site numbers and retrieval date. Used in Step 2 to report peak stage
+  and discharge alongside the rainfall totals.
 - **RMA Summary of Business, Cause of Loss files** (rma.usda.gov → Tools & Reports →
   Summary of Business → Cause of Loss). Filter: state CA, counties Monterey and Santa
   Cruz, commodity Strawberries, crop years 2015–2024. Fields of interest: cause of
@@ -149,14 +153,26 @@ CHECKPOINT: the figure, the acquisition table and the threshold sensitivity. Sto
 Step 2.
 
 **Step 2 — Sentinel-1 flood mask.**
-Pre window: Feb 1–Mar 8, 2023. Post window: Mar 11–20, 2023. Same orbit direction.
-Apply 3×3 focal mean (speckle). Per pixel: flooded if
-(post_VV_dB − pre_VV_dB) < −3 **and** post_VV_dB < −15. Mask permanent water.
+Pre window: Feb 1–Mar 8, 2023. Post window: Mar 11–20, 2023. IW mode, **VV and VH**, one
+orbit direction, pairing pre with post on the same relative orbit. Apply 3×3 focal mean
+(speckle). Per pixel, per polarization: flooded if (post_dB − pre_dB) < −3 **and**
+post_dB < −15. Report the mask three ways: **VV only, VH only, and the two combined** — VH
+often separates flooded vegetation from open water better than VV. Mask permanent water.
 Per unit: fraction of pixels flooded.
-Compare the Sentinel-1 flood mask with the Step 1c optical mask and report agreement
-and disagreement in both directions, and flooded unit acreage against the 1,919-acre
-March strawberry figure in `docs/ground_truth_aggregate.md`. Treat neither as truth;
-report both.
+**Baseline wetness, checked before differencing:** report how much of the study area, and how
+many units, already show water-like backscatter in the Feb 1 – Mar 8 baseline. That window sits
+in a wet winter that included the January flooding; if the baseline is already wet, the change
+detection understates the March event, and the exhibit must say so.
+**River stage:** report peak gage height and discharge for the Pajaro River at Chittenden
+(USGS 11159000) and a Salinas River gauge over the event window, alongside the rainfall totals.
+The breach was a hydraulic failure: water reached those fields because a structure gave way
+upstream, not because a given amount of rain fell on the field.
+**Comparison:** against the Step 1c optical reference in both directions, against both the
+March 15 extent and the full union, plus flooded unit acreage against the 1,919-acre March
+strawberry figure in `docs/ground_truth_aggregate.md`. Treat neither as truth; report both.
+Use the optical reference at index minimum 0.0 as the default and carry the 0.1 variant as a
+**sensitivity band on every agreement figure**, not as a separate table.
+**Framing:** this measures **flood detection**, not loss. There is no field-level loss data.
 CHECKPOINT: pre image, post image, flood mask, side by side, with the town of
 Pajaro labeled. Human confirms the known breach area shows as flooded and the
 Salinas Valley does not.
@@ -200,6 +216,9 @@ hit (pays, loss), miss (no pay, loss), false alarm (pays, no loss),
 correct reject (no pay, no loss). Report counts and rates.
 Output: `data/derived/units.csv` with every per-unit value used, including the
 flagged sequence B and C fields.
+The four-cell table measures **flood detection performance, not loss prediction**: `truth` is
+flooded or not flooded from the Step 1c reference, and no field-level loss data exists. Do not
+describe hits and misses as losses paid or missed.
 CHECKPOINT: the four-cell tables. This is the core result.
 
 **Step 7 — Write EXHIBIT.md.** See §8.
@@ -225,12 +244,14 @@ Mirror how RMA justified FIP-SI and HIP-WI. Sections, in order:
    known weaknesses. This is what expert reviewers read first.
 3. Event and study area.
 4. Method (from §6), one paragraph per step.
-5. Results: the four-cell tables; rain-only vs dual; rainfall-product disagreement;
+5. Results, framed as flood detection performance and not loss prediction: the four-cell
+   tables; rain-only vs dual; rainfall-product disagreement;
    and the Step 1c acquisition table (clear-pixel fraction over the valleys by date) as a
    standalone result, showing that no optical observation exists for March 11–14 when water
    was at its peak.
-6. Basis risk: false-alarm rate (pays without loss) and miss rate (loss without
-   pay) for each design, stated plainly.
+6. Basis risk: false-alarm rate (pays where no flood was detected in the reference) and miss
+   rate (flood in the reference with no payment) for each design, stated plainly as detection
+   error against the Step 1c reference, not as loss outcomes.
 7. Limitations: cloud cover, mulch and bare-soil confounds, 10–30 m pixels vs bed
    width, invisibility of internal damage, single event, ground-truth coverage, and
    crop-map uncertainty. For the last, state plainly that neither crop map is
@@ -251,6 +272,13 @@ Mirror how RMA justified FIP-SI and HIP-WI. Sections, in order:
    area, which biases against this method rather than for it; cloud cover during the peak
    is why no optical observation exists at maximum inundation; and the reference is a
    water mask derived here, not a surveyed extent, so it carries its own error.
+   State that there is no field-level loss data: units can be classified flooded or not, never
+   lost or not; the 1,919-acre county figure is an aggregate from a voluntary survey with no
+   map. State that flood from a levee breach and damage from direct rainfall are different
+   perils that a real product would treat differently, and that this event tests the former.
+   State that in the optical reference the index minimum moves mapped area by about a third
+   while the change threshold moves it about 5%, so the reference carries a substantial
+   analyst-choice component, reported as a sensitivity band on every agreement figure.
 8. What it would take to be rateable: more events, more counties, field-level
    ground truth, possibly commercial 3 m imagery.
 9. Verdict against the kill criteria in §4.

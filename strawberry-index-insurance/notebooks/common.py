@@ -15,6 +15,7 @@ FIGURES = ROOT / "figures"
 COUNTY_GEOIDS = ["06053", "06087"]
 
 # Earth Engine datasets (§5)
+UNITS_ASSET = "projects/cropczyk/assets/strawberry_fields_dwr_wy2023"  # Step 1 units (§5)
 COUNTIES = "TIGER/2018/Counties"
 CDL = "USDA/NASS/CDL"
 CDL_STRAWBERRY = 221
