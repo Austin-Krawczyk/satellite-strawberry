@@ -43,11 +43,12 @@ has not been shared.
 2. `figures/` — the six figures in §7.
 3. `data/derived/` — the per-unit table (§6, step 6) as CSV.
 4. `EXHIBIT.md` — structured like an FCIC feasibility exhibit (§8). **Length, revised
-   2026-09-16 and again after Step 4b:** approximately 7,500 words with ten tables, five of them
-   mandatory (the four-cell tables, the 18-unit reference table, the optical acquisition table,
-   the radar coverage table and the dataset table; the rest carry the NDVI timing comparison,
-   the rainfall event totals, the mulch comparison, the basis-risk rates and the Step 4b station
-   comparison), rendering to about eleven pages at 10pt with 0.75-inch margins. Word count
+   2026-09-16, after Step 4b, and again on 2026-09-17 after the RMA tabulation:** approximately
+   8,150 words with ten tables, five of them mandatory (the four-cell tables, the 18-unit
+   reference table, the optical acquisition table, the radar coverage table and the dataset
+   table; the rest carry the NDVI timing comparison, the rainfall event totals, the mulch
+   comparison, the basis-risk rates and the Step 4b station comparison), rendering to about
+   twelve pages at 10pt with 0.75-inch margins. Word count
    and table count are the measures, not a rendered page count. The original ten-page cap was
    set before the analysis produced its table load; none of the mandated content in §8 is to be
    cut to meet a page number.
@@ -323,7 +324,14 @@ An app key is now available, so the station check recorded as outstanding in Ste
 CHECKPOINT: the station table, the per-product comparison for both events, and the verdict on
 what it resolves.
 
-**Step 5 — Ground truth. SKIPPED (decision of 2026-09-16).**
+**Step 5 — Ground truth. SKIPPED for the per-unit assignment (decision of 2026-09-16);
+the county-level RMA tabulation was completed on 2026-09-17.**
+The RMA Summary of Business Cause of Loss files were retrieved and tabulated in
+`notebooks/05_rma_cause_of_loss.ipynb`, producing **Figure 6** and exhibit §5.6. Requirements
+carried forward for anyone re-running it: take column names from the published record layout
+(Indemnity Amount is field 29) and never from a guessed position; report **insured** losses as
+such, and state that the file lists only rows where a loss was paid, so it shows neither insured
+acreage nor participation and near-emptiness is not evidence that a peril is rare.
 There is no field-level loss data, so `truth` cannot be assigned as lost or not lost. The Step 1c
 optical reference supplies flooded / not flooded instead, and Step 6 uses it directly. The RMA
 Cause of Loss tabulation stays in scope for the exhibit's context section if time allows.
@@ -361,6 +369,10 @@ CHECKPOINT: the four-cell tables. This is the core result.
 4. Rainfall event totals, four products, same color scale (four panels).
 5. Four-cell results: rain-only vs dual, best threshold per product (one table figure).
 6. RMA Cause of Loss: strawberry indemnities by cause, 2015–2024, both counties (bar).
+   **Built 2026-09-17.** Two panels: the strawberry record (two rows in ten years, both March
+   2023, both Flood) against every crop year, and the all-commodity cause ranking for the same
+   counties with the wet perils highlighted, so the near-empty left panel is readable as
+   exposure rather than as a plotting error.
 
 Every figure: title, data source, date window, scale bar, north arrow where spatial.
 Save as PNG at 200 dpi and as the notebook cell that produced it.
@@ -434,6 +446,12 @@ Mirror how RMA justified FIP-SI and HIP-WI. Sections, in order:
    everywhere at any threshold — which is a plausible-sounding statement about grid resolution that
    was really a units mistake. Anyone building an index on gridded inputs should cross-check
    products against each other and against physical plausibility before trusting any of them.
+   **The RMA record (added 2026-09-17):** the cause-of-loss file reports **insured** losses
+   only, and only rows where a loss was paid, so it shows neither insured acreage nor
+   participation; its near-emptiness for strawberries must not be read as evidence that the
+   peril is rare. State the 18 reference units as a share of the county's reported 1,919 flooded
+   acres, and account for the gap: cloud on 15 March, the 30% inundation threshold for
+   inclusion, and the sequence B and C fields outside the unit set.
    **The CIMIS station check (revised 2026-09-16):** remove CIMIS from the outstanding items and
    record what was actually done in Step 4b — which stations, over which windows, and what the
    comparison showed. State plainly what it does not resolve: stations are sparse and none sits on
@@ -451,8 +469,12 @@ Mirror how RMA justified FIP-SI and HIP-WI. Sections, in order:
    (Step 3b: the signal decays to 3 of 18 units by March 20 and 1 of 18 by March 25). Inundation is
    already implied by the weather trigger, so a gate that only re-detects it adds verification cost
    without adding information about loss. That holds regardless of timing, threshold or sensor, and
-   it generalises beyond strawberries to any peril where the visible signal is the hazard itself
-   rather than its effect on the crop.
+   **whether it generalises beyond strawberries is a proposition worth testing, not a result
+   established here** — it rests on one peril, one crop and one event. State what would confirm
+   it (the same decay in other perils whose visible signature passes with the hazard while the
+   damage persists: brief inundation of other row crops, hail on a crop that regrows, wind
+   lodging that stands back up) and what would refute it (a peril where an imagery gate adds
+   detection over the weather trigger after the hazard has passed).
    **Second finding, measurement level: the imagery gate as specified fails on the fields it most
    needs to catch.**
    Of the 18 units the Step 1c reference places in standing water on March 15, the radar gate fires

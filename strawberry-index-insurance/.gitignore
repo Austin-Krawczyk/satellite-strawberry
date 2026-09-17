@@ -22,3 +22,8 @@ Thumbs.db
 
 # CIMIS app key: personal credential, never committed
 data/raw/cimis/APP_KEY
+
+# RMA cause-of-loss zips (~5 MB each): keep locally; provenance in SOURCE.md
+data/raw/rma/*.zip
+data/raw/rma/*.pdf
+!data/raw/rma/SOURCE.md

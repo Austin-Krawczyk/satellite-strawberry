@@ -59,6 +59,7 @@ Latency is given in the weakness column where it constrains operational use.
 | Elevation | `USGS/3DEP/10m_collection` | USGS | 10 m | static | Replaces deprecated `USGS/3DEP/10m`. |
 | River lines | `WWF/HydroSHEDS/v1/FreeFlowingRivers` | WWF | coarse | static | Global network; distances are approximate. |
 | River stage and discharge | USGS sites 11159000, 11159500, 11152500 | USGS | point | 1939– | ~1-hour latency, the fastest input here. Three gauges only. |
+| Insured loss history | RMA Summary of Business, Cause of Loss (`colsom_2015`–`colsom_2024`) | USDA RMA | county | 1989– | Published annually. **Insured** losses only, and only rows where a loss was paid: it shows neither insured acreage nor participation, so absence of records is not absence of loss (§5.6). |
 | Rain, ground stations | CIMIS station `day-precip` (Web API) | CA DWR | point | 1982– | ~1-day latency. 14 reporting stations in and near the study area; none on a strawberry field, nearest 0.2 km from a unit (§5.3). Interface changed mid-2026 — see the reproducibility note below. |
 | Counties | `TIGER/2018/Counties` | US Census | — | — | — |
 
@@ -71,8 +72,7 @@ an informative error. The station data here came from the replacement,
 Management and takes the key as an `Ocp-Apim-Subscription-Key` HTTP header, never in a URL. The
 station values themselves are unaffected; only the interface changed.
 
-**Not obtained.** The RMA Summary of Business cause-of-loss files are public but were not
-retrieved, so the planned Figure 6 is unbuilt. No
+**Not obtained.** No
 published inundation polygon for the breach could be found, and every ready-made flood product
 for the event derives from Sentinel-1, so using one would have been circular; the reference was
 therefore built from optical imagery here (§4, Step 1c).
@@ -403,6 +403,36 @@ holds at 0.74, and the difference persists to the 31 March pass (+1.64 dB, 62% r
 separation 0.79), consistent with a lasting surface change rather than transient standing water.
 That rests on 18 units in one event with a confound reduced but not eliminated.
 
+### 5.6 Insured loss history: there is almost none (Figure 6)
+
+Across crop years 2015–2024, the entire federal cause-of-loss record for strawberries in these
+two counties is **two rows**. Both are Monterey, both are March 2023, both are coded **Flood**,
+and together they net **\$497,559** against 80.4 determined acres. **Santa Cruz County has no
+strawberry loss record at all in ten years.** Statewide over the same decade there are five
+strawberry rows: these two, one Ventura insect loss in 2015, and two small Ventura
+excess-moisture rows in 2023.
+
+**So March 2023 is not an outlier within a distribution — it is very nearly the whole
+distribution**, and the reason is exposure rather than weather. The county agricultural
+commissioner put March 2023 strawberry losses at 1,919 acres and \$160 million; the indemnity
+record for the same crop, counties and event is \$497,559, a gap of roughly 320×. Strawberries
+account for **0.51%** of insured loss in these counties over the decade (\$497,559 of \$97.7
+million), against grapes at \$73.1 million. The cause-of-loss file lists only rows where a loss
+was paid, so it cannot measure participation directly — but a peril that destroyed 1,919 acres
+while generating two claims is not a peril the federal book is currently carrying.
+
+For the wider picture, excess moisture and flood across **all** commodities in these counties
+total \$4.81 million over ten years, **4.9%** of insured loss, behind fire (\$35.2 million) and
+heat (\$19.0 million). 2023 is the peak wet year at \$2.99 million, 20.0% of that year's total.
+
+Two things follow for the product question. The absence of a loss history is **an argument for
+building something rather than against it** — it is what a protection gap looks like, and it is
+presumably why RMA is asking. But it also means **there is no insured loss experience in these
+counties to rate a strawberry flood product against**, so rating would have to lean on other
+districts, other crops, or non-insurance loss records (§8).
+
+**Figure 6** — insured cause-of-loss experience, both counties, 2015–2024.
+
 ---
 
 ## 6. Basis risk
@@ -435,6 +465,12 @@ risk could be quoted to a grower.
 ## 7. Limitations
 
 **No field-level loss data.** Units are flooded or not flooded, never lost or not lost. The
+18 reference units total **270 acres, about 14% of the 1,919 acres** the county reported lost;
+the gap is accounted for by cloud (571 of the 1,320 units, 30% of unit acreage, had no clear
+optical view on 15 March, so they could not be classified either way), by the 30% inundation
+threshold for inclusion (relaxing it to any detected water raises the set to 54 units and
+1,123 acres, 58% of the county figure), and by the 615 sequence B and C fields, 7,536 acres,
+that sit outside the sequence A unit set entirely. The
 1,919-acre March strawberry figure (Monterey County Agricultural Commissioner, 2023-05-12) is a
 county aggregate from a voluntary survey with no map, and the "roughly one fifth of farms"
 figure is an industry estimate. The January 2023 atmospheric-river losses (15,705 acres) are
@@ -490,9 +526,10 @@ are **different perils** that a real product would treat differently; this event
 former. Sentinel-1 area statistics exceeded Earth Engine's interactive limits, so mask acreages
 are computed over a 325,548-acre Pajaro-to-northern-Salinas valley box and are never two-county
 totals; per-unit fractions cover all 1,320 units. The river network used for distance is a
-coarse global product. **The RMA Summary of Business cause-of-loss files were not retrieved, so
-county-level insured loss experience is absent from the analysis and the planned Figure 6 is
-unbuilt; the files are public and were not obtained, not unavailable.**
+coarse global product. The RMA cause-of-loss record is now included (§5.6), but it carries its
+own limit: it reports **insured** losses only, and only rows where a loss was paid, so it shows
+neither insured acreage nor participation and its near-emptiness for strawberries cannot be
+read as evidence that the peril is rare.
 
 ---
 
@@ -500,7 +537,9 @@ unbuilt; the files are public and were not obtained, not unavailable.**
 
 1. **Field-level loss records** — RMA claim records with field locations, or grower block-level
    reports. Until units can be labelled lost or not lost, no design here can be evaluated as an
-   index, only as a flood detector.
+   index, only as a flood detector. Note that the county-level record will not supply them
+   either: it holds two strawberry rows in ten years (§5.6), so rating would have to borrow
+   experience from other districts or from non-insurance loss records.
 2. **More events and more counties** — the January 2023 atmospheric rivers, February 2017, and
    the Oxnard and Santa Maria districts. Eighteen reference units in one valley cannot support a
    rating parameter.
@@ -528,10 +567,16 @@ imagery detected was standing water. Once the water drained, the canopy looked u
 NDVI signal decays to 3 of 18 units by 20 March and 1 of 18 by 25 March (§5.2), and the March
 event does not appear in the crop's seasonal trajectory at all. **Inundation is already implied
 by the weather trigger.** A gate that only re-detects it adds verification cost without adding
-information about loss. This holds regardless of timing, threshold or sensor, and it
-generalises beyond strawberries to **any peril where the visible signal is the hazard itself
-rather than its effect on the crop.** It is the finding most likely to transfer to other
-products under consideration.
+information about loss. Within this event it holds regardless of timing, threshold or sensor.
+**Whether it generalises is a proposition worth testing, not a result established here:** it
+rests on one peril, one crop and one event, and the mechanism — a hazard whose visible signature
+is the hazard itself rather than its effect on the crop — is plausible but untested elsewhere.
+It would be **confirmed** by finding the same decay in other perils of that shape, where the
+visible signature passes with the hazard while the damage persists: brief inundation of other
+row crops, hail on a crop that regrows, wind lodging that stands back up. It would be
+**refuted** by a peril where an imagery gate adds detection over the weather trigger *after* the
+hazard has passed. That comparison needs only loss records and two or three events per peril,
+and it is the cheapest next test in this whole programme.
 
 **2. The measurement-level failure: the gate misses the fields it most needs to catch.** Of the
 18 units the reference places in standing water on 15 March, the radar gate fires on 3, the
@@ -578,6 +623,12 @@ revisit) rather than tunable; on that criterion the design should pivot to farme
 verification, or to a gauge-based trigger that needs no gate. And ground truth could **not** be
 established at the field level, so the four-cell tables are flood detection performance and
 nothing more.
+
+**On whether the peril is worth indexing at all.** The insured record cannot say it is
+recurring: two loss records in ten years, both from this event (§5.6). But that near-emptiness
+measures exposure, not weather — 1,919 acres were reported lost against \$497,559 of indemnity —
+so it reads as a protection gap rather than as evidence the peril is rare. It does mean any
+product here would be rated without local loss experience.
 
 **One positive, reusable result.** The mulch effect is itself measurable and crop-specific:
 strawberry fields carry 4.4 times the median VH water-like fraction of neighbouring lettuce and
