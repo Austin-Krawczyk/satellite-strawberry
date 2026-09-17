@@ -38,8 +38,12 @@ the hazard adds verification cost without adding information about loss, and tha
 peril where the visible signal is the hazard itself rather than its effect on the crop. Against
 this, the two designs fail in opposite directions rather than trading off usefully: rainfall
 alone pays nearly every field or almost none, and adding the gate caps detection at 33% because
-it finds only 6 of the 18 flooded fields on its own. The constructive conclusion is that this
-event is the wrong test for a rainfall index and the right test for a **river stage trigger** —
+it finds only 6 of the 18 flooded fields on its own. A second practical finding: checked against fourteen CIMIS
+ground stations, no one product proved more accurate than the others — their errors against the
+stations are as large as their disagreement with each other, so the choice of rainfall product
+cannot currently be settled by evidence and has to be fixed by convention and priced. The
+constructive conclusion is that this event is the wrong test for a rainfall index and the right
+test for a **river stage trigger** —
 gauge stage is observed hourly, has a long record, and is causally upstream of the damage. One
 reusable result came out of the failure: before any flooding, mulched strawberry beds read as
 majority open water to radar about two and a half times as often as neighbouring lettuce fields,

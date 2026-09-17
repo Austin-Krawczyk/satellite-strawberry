@@ -43,10 +43,12 @@ has not been shared.
 2. `figures/` — the six figures in §7.
 3. `data/derived/` — the per-unit table (§6, step 6) as CSV.
 4. `EXHIBIT.md` — structured like an FCIC feasibility exhibit (§8). **Length, revised
-   2026-09-16:** approximately 6,300 words with nine tables, five of them mandatory (the
+   2026-09-16, revised again the same day after Step 4b:** approximately 7,000 words with ten
+   tables, five of them mandatory (the
    four-cell tables, the 18-unit reference table, the optical acquisition table, the radar
    coverage table and the dataset table; the other four carry the NDVI timing comparison,
-   the rainfall event totals, the mulch comparison and the basis-risk rates), rendering to
+   the rainfall event totals, the mulch comparison, the basis-risk rates and the Step 4b
+   station comparison), rendering to
    about ten pages at 10pt with 0.75-inch margins. Word count
    and table count are the measures, not a rendered page count. The original ten-page cap was
    set before the analysis produced its table load; none of the mandated content in §8 is to be
@@ -103,8 +105,13 @@ unavailable, stop and report it.
   Cruz, commodity Strawberries, crop years 2015–2024. Fields of interest: cause of
   loss description (Excess Moisture/Precipitation/Rain; Flood), month of loss,
   indemnity amount. This is public, county-level loss ground truth.
-- **CIMIS station data** (cimis.water.ca.gov): daily precipitation for stations in
-  the study area for the event windows. Station-level check on the gridded products.
+- **CIMIS station data** (cimis.water.ca.gov): daily precipitation for stations in and near
+  the study area for the event windows, and full calendar 2022 and 2023 at one station.
+  Station-level check on the gridded products (§6 Step 4b). Web API at
+  `https://et.water.ca.gov/api/data` and `https://et.water.ca.gov/api/station`; data item
+  `day-precip`, `unitOfMeasure=M` for millimetres. Raw JSON in `data/raw/cimis/` with
+  `SOURCE.md`. **The app key is a personal credential:** read from `CIMIS_APP_KEY` or the
+  gitignored `data/raw/cimis/APP_KEY`, never printed, never committed.
 - **Flood extent reference** for March 2023: any published inundation map (FEMA,
   USGS, Cal OES, Monterey County, or a Copernicus EMS activation if one exists).
   Record source and date. If none is found, record that.
@@ -278,6 +285,28 @@ CHECKPOINT: table of per-unit event totals across products, and one figure
 showing all four products over the study area. Note the range across products
 for the same unit; that range is the basis risk of the rainfall data itself.
 
+**Step 4b — CIMIS station cross-check (added 2026-09-16, after the exhibit was first written).**
+An app key is now available, so the station check recorded as outstanding in Step 4 is done.
+- Pull daily precipitation from CIMIS stations in and near the study area for the **9–14 March
+  2023** event window, and for **full calendar 2022 and 2023 at one station** as a units sanity
+  check of the kind that caught the CPC error. Report station **name, number, coordinates,
+  elevation, and distance to the nearest unit**.
+- For each station, compare the station total against each of the four gridded products
+  **extracted at the station's own coordinates, not at unit centroids**. Report the difference
+  per product, absolute and as a percentage, and say which product tracks the stations best over
+  the event window. Repeat for the **January 2023** event as a second data point.
+- **State what this does and does not resolve.** It gives absolute accuracy at a handful of
+  points. It does not validate the products over the fields: stations are sparse and none will
+  sit on a strawberry field. If the stations agree with one product substantially better than the
+  others, that is a finding about **product selection for this region** and belongs in §8 item 5
+  and in §8 item 8's rateability list. If all four sit within the products' mutual disagreement,
+  say so: it means the 28.5 mm spread is **not resolvable with available ground data**, which is
+  itself a rating problem.
+- The app key is a personal credential: read it from the environment or a gitignored file, never
+  print it, never commit it, never write it into any output or provenance file.
+CHECKPOINT: the station table, the per-product comparison for both events, and the verdict on
+what it resolves.
+
 **Step 5 — Ground truth. SKIPPED (decision of 2026-09-16).**
 There is no field-level loss data, so `truth` cannot be assigned as lost or not lost. The Step 1c
 optical reference supplies flooded / not flooded instead, and Step 6 uses it directly. The RMA
@@ -389,12 +418,16 @@ Mirror how RMA justified FIP-SI and HIP-WI. Sections, in order:
    everywhere at any threshold — which is a plausible-sounding statement about grid resolution that
    was really a units mistake. Anyone building an index on gridded inputs should cross-check
    products against each other and against physical plausibility before trusting any of them.
-   **The CIMIS station check was not done:** the API requires a personal key that this project did
-   not have, so the gridded products were never cross-checked against ground stations. Their
-   absolute accuracy over these fields is unverified, although the disagreement between them is
-   measured.
+   **The CIMIS station check (revised 2026-09-16):** remove CIMIS from the outstanding items and
+   record what was actually done in Step 4b — which stations, over which windows, and what the
+   comparison showed. State plainly what it does not resolve: stations are sparse and none sits on
+   a strawberry field, so the check establishes absolute accuracy at a handful of points, not
+   product accuracy over the fields.
 8. What it would take to be rateable: more events, more counties, field-level
-   ground truth, possibly commercial 3 m imagery.
+   ground truth, possibly commercial 3 m imagery. If Step 4b shows one product tracking the
+   stations substantially better than the others, carry that into this list as a product-selection
+   requirement for this region; if it does not, carry the opposite — that the product spread is
+   not resolvable with available ground data.
 9. Verdict against the kill criteria in §4. State this plainly, near the front of the section,
    and do not soften it or bury it under the sensitivity tables.
    **Lead finding, design level: on this event the imagery gate confirmed inundation, not damage.**

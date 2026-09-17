@@ -25,8 +25,11 @@ its dataset, date window and unit count.
 ## 1. Question and design principle
 
 For California strawberries, does a rainfall trigger confirmed by satellite imagery separate
-fields that lost crop from fields that did not, better than a rainfall trigger alone? The
-design under test holds rainfall as the insurable event and uses imagery only as a
+**fields that flooded from fields that did not**, better than a rainfall trigger alone? The
+question the programme actually needs answered — whether such a trigger separates fields that
+*lost crop* from fields that did not — **this analysis could not reach**, because no
+field-level loss records exist for this event; it is the first thing more data would buy (§8).
+The design under test holds rainfall as the insurable event and uses imagery only as a
 confirmation gate that blocks payment to fields showing no visible damage; imagery is never the
 loss meter, because rot, mould and internal fruit damage are invisible from orbit. The test
 event is the Pajaro River levee breach of 10–11 March 2023, the largest recent flood loss to
@@ -49,19 +52,18 @@ Latency is given in the weakness column where it constrains operational use.
 | Flood detection | `COPERNICUS/S1_GRD` (IW, VV+VH) | ESA | 10 m | 2014– | ~1-day latency, but track-dependent coverage and 12-day revisit in 2023 (§5.4). Specular surfaces (plastic mulch) mimic open water. |
 | Water reference, vegetation | `COPERNICUS/S2_SR_HARMONIZED` + `GOOGLE/CLOUD_SCORE_PLUS/V1/S2_HARMONIZED` | ESA / Google | 10–20 m | 2017– | ~1-day latency; cloud is the binding constraint. No usable acquisition existed 11–14 March 2023 (§5.4). |
 | Permanent water | `JRC/GSW1_4/GlobalSurfaceWater` (occurrence > 50) | EC JRC | 30 m | 1984–2021 | Static, pre-2022 baseline. |
-| Rain, coarse (PRF-like) | `NOAA/CPC/Precipitation` | NOAA CPC | 0.5° (~50 km) | 1979– | ~1-day latency. Band is **0.1 mm/day**, not mm/day (§7). Takes 5 distinct values across all 1,320 fields. |
+| Rain, coarse (PRF-like grid) | `NOAA/CPC/Precipitation` | NOAA CPC | 0.5° (~50 km) | 1979– | ~1-day latency. Band is **0.1 mm/day**, not mm/day (§7). Takes 5 distinct values across all 1,320 fields. Resembles PRF in grid coarseness only, not in index design (§6). |
 | Rain, 4 km | `OREGONSTATE/PRISM/ANd` | PRISM Group | 4 km | 1981– | Provisional to stable over months. `AN81d` is deprecated and ends 2020-12-30; `ANd` replaces it. |
 | Rain, 1 km | `NASA/ORNL/DAYMET_V4` | NASA ORNL | 1 km | 1980–2023 | Annual release, ~1-year latency; not usable for in-season triggering. |
 | Rain, satellite | `NASA/GPM_L3/IMERG_V07` | NASA | 0.1° | 2000– | Early run ~4 h, final ~3.5 months. Retrieval-based; lowest event totals of the four here. |
 | Elevation | `USGS/3DEP/10m_collection` | USGS | 10 m | static | Replaces deprecated `USGS/3DEP/10m`. |
 | River lines | `WWF/HydroSHEDS/v1/FreeFlowingRivers` | WWF | coarse | static | Global network; distances are approximate. |
 | River stage and discharge | USGS sites 11159000, 11159500, 11152500 | USGS | point | 1939– | ~1-hour latency, the fastest input here. Three gauges only. |
+| Rain, ground stations | CIMIS station `day-precip` (Web API) | CA DWR | point | 1982– | ~1-day latency. 14 reporting stations in and near the study area; none on a strawberry field, nearest 0.2 km from a unit (§5.3). |
 | Counties | `TIGER/2018/Counties` | US Census | — | — | — |
 
-**Not obtained.** CIMIS station precipitation (the API requires a personal app key that was not
-supplied), so no ground-station cross-check of the gridded products exists: their disagreement
-with each other is measured in §5.3, their absolute accuracy is not. The RMA Summary of Business
-cause-of-loss files are public but were not retrieved, so the planned Figure 6 is unbuilt. No
+**Not obtained.** The RMA Summary of Business cause-of-loss files are public but were not
+retrieved, so the planned Figure 6 is unbuilt. No
 published inundation polygon for the breach could be found, and every ready-made flood product
 for the event derives from Sentinel-1, so using one would have been circular; the reference was
 therefore built from optical imagery here (§4, Step 1c).
@@ -263,8 +265,8 @@ of trigger level.** That is a rating problem, independent of basis risk: two ins
 different reanalyses would price and pay differently on identical fields. It is also
 unverified in absolute terms, because the CIMIS station check was not obtained.
 
-**CPC, the product PRF's Rainfall Index most resembles, takes only five distinct values across
-all 1,320 fields** at its 0.5° (~50 km) cell size, and gives the reference units and the dry
+**CPC, whose grid is the closest of the four to the one PRF's Rainfall Index uses, takes only
+five distinct values across all 1,320 fields** at its 0.5° (~50 km) cell size, and gives the reference units and the dry
 units **the same median total, 79.2 mm against 79.2 mm**. At that grid size a PRF-style index
 cannot distinguish a flooded field from its dry neighbour. Beside it, the best case across all
 four products and three thresholds is **Daymet at 100 mm: 83% of reference units (15 of 18)
@@ -276,7 +278,36 @@ No threshold in the specified range separates flooded from dry units in any prod
 reason is physical rather than statistical: the water on these fields came from a levee
 failure upstream, not from rain falling on the field.
 
-**Figure 4** — event totals, four products, shared colour scale.
+**Ground stations cannot say which product is right (Step 4b).** Fourteen CIMIS stations reported
+over the event window, the nearest 0.2 km from a unit and one of them in Pajaro itself, though
+none sits on a strawberry field. Sampling each product at each station's own coordinates:
+
+| product | March: mean abs. error | March: mean abs. % | January: mean abs. error | January: mean abs. % |
+|---|---|---|---|---|
+| cpc | 25.4 mm | 45% | 91.2 mm | 102% |
+| prism | 21.0 mm | 33% | **42.7 mm** | 65% |
+| daymet | **20.0 mm** | 35% | 61.6 mm | 75% |
+| imerg | 20.1 mm | 30% | 48.0 mm | 70% |
+
+**No product is vindicated.** Over the event window the best (Daymet, 20.0 mm) and the worst
+(CPC, 25.4 mm) differ by a factor of 1.3, and the four products' mutual spread at those same
+points is 25.2 mm — so **the station errors are as large as the disagreement they were meant to
+adjudicate.** The ranking also flips between events: Daymet is closest in March, PRISM in
+January. The 28.5 mm spread across products is therefore **not resolvable with available ground
+data**, which is a rating problem in its own right: the input uncertainty cannot be priced away
+by picking the right product, because the ground network cannot say which one is right.
+
+The stations do sharpen the grid argument. Over the event window they range from 33.8 mm
+(Arroyo Seco) to 137.3 mm (De Laveaga), a factor of four across the study area — while CPC
+returns just four distinct values across all fourteen, and the same 79.2 mm at eight of them,
+including both Pajaro and Salinas. At annual scale the coarse products read low against the
+station at De Laveaga: in 2023, station 1,014 mm against CPC 651 mm and IMERG 737 mm, with
+PRISM 1,126 mm and Daymet 1,169 mm above it; 2022 behaves the same way. That also confirms the
+CPC units correction of §7 independently — at the corrected 0.1 mm/day scaling CPC's annual
+total is the right order of magnitude, where the uncorrected reading would have been 6,510 mm.
+
+**Figure 4** — event totals, four products, shared colour scale. A supplementary figure shows
+each product against each station for both windows.
 
 ### 5.4 Sensor availability — a finding, not a caveat
 
@@ -353,9 +384,15 @@ Stated as detection error against the Step 1c optical reference, **not** as loss
 | design | detection rate (flooded units paid) | false-alarm rate (dry units paid) | units paid of 737 |
 |---|---|---|---|
 | Rain only, best (daymet > 100 mm) | 83% | 20% | 162 |
-| Rain only, CPC > 75 mm (PRF-like) | 100% | 99% | 733 |
+| Rain only, CPC > 75 mm (CPC grid) | 100% | 99% | 733 |
 | Dual, best (any product > 50 mm) | 33% | 1% | 15 |
 | Image only | 33% | 1% | 15 |
+
+**The CPC row is not a simulation of PRF.** PRF indexes rainfall relative to a long-term
+average for a grid area rather than against an absolute millimetre threshold, and it pays on a
+shortfall against that average rather than on an excess. What the row shows is the *resolution*
+problem PRF's grid would inherit — at a 0.5° cell a flooded field and its dry neighbour are the
+same pixel — not how PRF itself would have performed on this event.
 
 The miss rate of the dual design is **67%** — two of every three fields the reference places in
 standing water receive nothing. The rain-only design's false-alarm rate runs from 0% to 100%
@@ -408,8 +445,13 @@ in **0.1 mm/day**, not mm/day. Taken at face value it gave 792 mm over the six-d
 part of coastal California receives five metres of rain. Caught only by an independent
 plausibility check, an unscaled CPC would have produced a confident, precise and entirely wrong
 conclusion — that a coarse-grid index triggers easily on this event. Any index built on gridded
-reanalysis needs unit verification against station data as a standing control, which is
-precisely the check (CIMIS) this project could not complete.
+reanalysis needs unit verification against station data as a standing control. That check was
+completed here, after this exhibit was first drafted, once a CIMIS key became available (§5.3):
+the station record confirms the corrected scaling independently. **What the station check does
+not do is validate the products over the fields.** Fourteen stations is a sparse network, none
+of them sits on a strawberry field, and their errors against the products are as large as the
+products' disagreement with each other, so absolute accuracy is established at a handful of
+points and nowhere else.
 
 **Other limits.** Cloud at the flood peak and 12-day radar revisit (§5.4). Mulch and bare-soil
 confounds (§5.5). At 10–30 m a pixel spans several raised beds, so no result here is bed-level,
@@ -438,8 +480,11 @@ unbuilt; the files are public and were not obtained, not unavailable.**
    within the hour, has a long record, and is causally upstream of the damage (§9).
 4. **Imagery that arrives at the peril** — commercial 3 m optical with daily revisit, or tasked
    SAR — weighed against §9's finding that the gate confirmed inundation rather than damage.
-5. **Station verification of whichever rainfall product is adopted** (§7), and a documented
-   choice among products given their 28.5 mm median disagreement.
+5. **A way to choose among rainfall products that the ground network can support.** Step 4b
+   shows the present network cannot: station errors are as large as the products' mutual
+   disagreement and the ranking flips between events (§5.3). Either a denser gauge network in the
+   producing districts, or a documented convention that fixes the product by rule and prices the
+   residual uncertainty rather than pretending it away.
 
 ---
 
@@ -473,8 +518,8 @@ without the caveat in §5.2.
 **3. The trigger-level failure: no rainfall threshold separated flooded from dry fields, in any
 of four products.** At 50 mm all four pay every field in the study area; at 100 mm the best
 product detects 83% of reference units while still paying 556 dry ones, and the four products
-disagree about who is paid at all (2, 0, 373, 578 units). CPC — the product PRF's Rainfall Index
-most resembles — assigns reference and dry units the identical median total of 79.2 mm. **The
+disagree about who is paid at all (2, 0, 373, 578 units). CPC, on the coarsest grid, assigns
+reference and dry units the identical median total of 79.2 mm. **The
 water came from a levee failure, not from rain on the field.** The Pajaro crested at 32.10 ft at
 Watsonville at 00:45 on 11 March; no amount of rainfall measured over a field explains which
 side of a failed levee it sat on.

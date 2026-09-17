@@ -19,3 +19,6 @@ data/raw/dwr_crop_mapping/*
 # OS
 Thumbs.db
 .DS_Store
+
+# CIMIS app key: personal credential, never committed
+data/raw/cimis/APP_KEY

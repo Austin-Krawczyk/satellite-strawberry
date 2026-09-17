@@ -1,0 +1,2 @@
+mutual_spread_stations_mm,unit_spread_mm,best_product,best_mae_mm,worst_product,worst_mae_mm,consistent_across_events,stations_separate_products
+25.21500050323084,28.5,daymet,19.994286017013447,cpc,25.447236345495494,False,False
