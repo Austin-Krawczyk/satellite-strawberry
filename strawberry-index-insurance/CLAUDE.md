@@ -43,13 +43,11 @@ has not been shared.
 2. `figures/` — the six figures in §7.
 3. `data/derived/` — the per-unit table (§6, step 6) as CSV.
 4. `EXHIBIT.md` — structured like an FCIC feasibility exhibit (§8). **Length, revised
-   2026-09-16, revised again the same day after Step 4b:** approximately 7,000 words with ten
-   tables, five of them mandatory (the
-   four-cell tables, the 18-unit reference table, the optical acquisition table, the radar
-   coverage table and the dataset table; the other four carry the NDVI timing comparison,
-   the rainfall event totals, the mulch comparison, the basis-risk rates and the Step 4b
-   station comparison), rendering to
-   about ten pages at 10pt with 0.75-inch margins. Word count
+   2026-09-16 and again after Step 4b:** approximately 7,500 words with ten tables, five of them
+   mandatory (the four-cell tables, the 18-unit reference table, the optical acquisition table,
+   the radar coverage table and the dataset table; the rest carry the NDVI timing comparison,
+   the rainfall event totals, the mulch comparison, the basis-risk rates and the Step 4b station
+   comparison), rendering to about eleven pages at 10pt with 0.75-inch margins. Word count
    and table count are the measures, not a rendered page count. The original ten-page cap was
    set before the analysis produced its table load; none of the mandated content in §8 is to be
    cut to meet a page number.
@@ -106,12 +104,18 @@ unavailable, stop and report it.
   loss description (Excess Moisture/Precipitation/Rain; Flood), month of loss,
   indemnity amount. This is public, county-level loss ground truth.
 - **CIMIS station data** (cimis.water.ca.gov): daily precipitation for stations in and near
-  the study area for the event windows, and full calendar 2022 and 2023 at one station.
-  Station-level check on the gridded products (§6 Step 4b). Web API at
-  `https://et.water.ca.gov/api/data` and `https://et.water.ca.gov/api/station`; data item
-  `day-precip`, `unitOfMeasure=M` for millimetres. Raw JSON in `data/raw/cimis/` with
-  `SOURCE.md`. **The app key is a personal credential:** read from `CIMIS_APP_KEY` or the
-  gitignored `data/raw/cimis/APP_KEY`, never printed, never committed.
+  the study area for the event windows, and full calendar 2022 and 2023 at **every** reporting
+  station (one station cannot separate a real regional bias from an unrepresentative site).
+  Station-level check on the gridded products (§6 Step 4b). **Reproducibility note:** the legacy
+  Web API (`/api/data`, `/api/station`, key as the `appKey` query parameter) was **retired on
+  31 July 2026**; requests carrying `appKey` are now rejected by the site firewall whatever the
+  key's value, so any replication attempt written before that date will fail. Use
+  `https://et.water.ca.gov/StationWeb/GetDataByStationNumber` and `.../GetAllStations`, behind
+  Azure API Management, with the key sent as the `Ocp-Apim-Subscription-Key` HTTP header and
+  never in a URL. Data item `day-precip`, `unitOfMeasure=M` for millimetres, limit 1,750 records
+  per request. Raw JSON in `data/raw/cimis/` with `SOURCE.md`. **The app key is a personal
+  credential:** read from `CIMIS_APP_KEY`, the gitignored `.env`, or the gitignored
+  `data/raw/cimis/APP_KEY`; never printed, never committed.
 - **Flood extent reference** for March 2023: any published inundation map (FEMA,
   USGS, Cal OES, Monterey County, or a Copernicus EMS activation if one exists).
   Record source and date. If none is found, record that.
@@ -295,6 +299,18 @@ An app key is now available, so the station check recorded as outstanding in Ste
   **extracted at the station's own coordinates, not at unit centroids**. Report the difference
   per product, absolute and as a percentage, and say which product tracks the stations best over
   the event window. Repeat for the **January 2023** event as a second data point.
+- **Report whether the station-to-station spread is spatially coherent.** Compare the mean
+  absolute difference between station pairs by separation distance, and each station against its
+  nearest neighbour. If nearby stations agree markedly better than distant ones, the variation is
+  real rainfall structure that the coarse grids average away and **the grid argument is about
+  resolution**; a denser network would resolve real structure. If neighbours disagree as much as
+  distant stations, part of the spread is station error or siting and **the argument is partly
+  about noise**; a denser network buys less than the raw spread suggests. That distinction
+  determines what a denser network would actually buy, so state which it is.
+- **Do not generalise a bias from one station.** Any claim that a product reads systematically
+  high or low must be tested across every station with full-year coverage, reporting each
+  station's elevation, setting and distance to the coast. If the pattern holds at several, state
+  it as a regional bias; if it is one station, state it as one station.
 - **State what this does and does not resolve.** It gives absolute accuracy at a handful of
   points. It does not validate the products over the fields: stations are sparse and none will
   sit on a strawberry field. If the stations agree with one product substantially better than the

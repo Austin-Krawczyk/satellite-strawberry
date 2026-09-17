@@ -59,8 +59,17 @@ Latency is given in the weakness column where it constrains operational use.
 | Elevation | `USGS/3DEP/10m_collection` | USGS | 10 m | static | Replaces deprecated `USGS/3DEP/10m`. |
 | River lines | `WWF/HydroSHEDS/v1/FreeFlowingRivers` | WWF | coarse | static | Global network; distances are approximate. |
 | River stage and discharge | USGS sites 11159000, 11159500, 11152500 | USGS | point | 1939– | ~1-hour latency, the fastest input here. Three gauges only. |
-| Rain, ground stations | CIMIS station `day-precip` (Web API) | CA DWR | point | 1982– | ~1-day latency. 14 reporting stations in and near the study area; none on a strawberry field, nearest 0.2 km from a unit (§5.3). |
+| Rain, ground stations | CIMIS station `day-precip` (Web API) | CA DWR | point | 1982– | ~1-day latency. 14 reporting stations in and near the study area; none on a strawberry field, nearest 0.2 km from a unit (§5.3). Interface changed mid-2026 — see the reproducibility note below. |
 | Counties | `TIGER/2018/Counties` | US Census | — | — | — |
+
+**Reproducibility note on CIMIS.** The legacy CIMIS Web API (`/api/data` and `/api/station`,
+with the app key passed as an `appKey` query parameter) was retired on **31 July 2026**. Requests
+carrying that parameter are now rejected by the site firewall whatever the key's value, so an
+attempt to replicate this step using the interface documented before that date will fail without
+an informative error. The station data here came from the replacement,
+`https://et.water.ca.gov/StationWeb/GetDataByStationNumber`, which sits behind Azure API
+Management and takes the key as an `Ocp-Apim-Subscription-Key` HTTP header, never in a URL. The
+station values themselves are unaffected; only the interface changed.
 
 **Not obtained.** The RMA Summary of Business cause-of-loss files are public but were not
 retrieved, so the planned Figure 6 is unbuilt. No
@@ -297,14 +306,33 @@ January. The 28.5 mm spread across products is therefore **not resolvable with a
 data**, which is a rating problem in its own right: the input uncertainty cannot be priced away
 by picking the right product, because the ground network cannot say which one is right.
 
-The stations do sharpen the grid argument. Over the event window they range from 33.8 mm
-(Arroyo Seco) to 137.3 mm (De Laveaga), a factor of four across the study area — while CPC
-returns just four distinct values across all fourteen, and the same 79.2 mm at eight of them,
-including both Pajaro and Salinas. At annual scale the coarse products read low against the
-station at De Laveaga: in 2023, station 1,014 mm against CPC 651 mm and IMERG 737 mm, with
-PRISM 1,126 mm and Daymet 1,169 mm above it; 2022 behaves the same way. That also confirms the
-CPC units correction of §7 independently — at the corrected 0.1 mm/day scaling CPC's annual
-total is the right order of magnitude, where the uncorrected reading would have been 6,510 mm.
+**The stations are the strongest evidence in this exhibit for the grid argument**, because
+they are measurements rather than products disagreeing with each other. Over the event window
+they range from **33.8 mm at Arroyo Seco to 137.3 mm at De Laveaga — a factor of four across
+the study area** — while CPC returns four distinct values across all fourteen and **the same
+79.2 mm at eight of them, including both Pajaro and Salinas**, which are 29 km apart and, on
+the ground, 98.1 mm and 58.5 mm respectively.
+
+**That spread is real rainfall structure, not station noise.** Mean absolute difference between
+station pairs rises with separation — **13.7 mm for pairs within 15 km against 42.0 mm beyond
+50 km, a factor of 3.1** — which is what spatially coherent rainfall looks like and not what
+instrument or siting error looks like. Neighbouring stations mostly agree closely: Arroyo Seco
+and Soledad II differ by 3.1 mm at 13 km, the two Salinas stations by 3.4 mm at 17 km, Gilroy
+and Pajaro by 0.9 mm at 22 km. The exception is instructive — De Laveaga sits 55.3 mm above
+Watsonville West II just 18 km away, on the flank of the Santa Cruz Mountains. The gradient is
+not a simple function of terrain proxies at this sample size (rank correlation with elevation
++0.20, with distance to the coast +0.05), so it is storm structure rather than a standing
+orographic pattern. **A denser network in the producing districts would therefore resolve real
+structure rather than chase noise** — which is what makes this a resolution problem.
+
+At annual scale, across 28 station-years at all fourteen stations, the pattern is **regression
+to the cell mean rather than a coastal bias**: the coarse products under-read the wettest sites
+and over-read the driest. CPC gives 53% of the station total at De Laveaga in 2022 but 214% at
+Arroyo Seco and 291% there in 2023; its median across all station-years is 123%, and it reads
+more than 15% low at only 5 of 28. The tendency runs with distance inland, not seaward
+(rank correlation of CPC against distance to the coast **+0.33**). This also confirms the CPC
+units correction of §7 independently: at the corrected 0.1 mm/day scaling CPC's annual totals
+sit in the right range, where the uncorrected reading would have been ten times the station's.
 
 **Figure 4** — event totals, four products, shared colour scale. A supplementary figure shows
 each product against each station for both windows.
@@ -482,9 +510,10 @@ unbuilt; the files are public and were not obtained, not unavailable.**
    SAR — weighed against §9's finding that the gate confirmed inundation rather than damage.
 5. **A way to choose among rainfall products that the ground network can support.** Step 4b
    shows the present network cannot: station errors are as large as the products' mutual
-   disagreement and the ranking flips between events (§5.3). Either a denser gauge network in the
-   producing districts, or a documented convention that fixes the product by rule and prices the
-   residual uncertainty rather than pretending it away.
+   disagreement and the ranking flips between events (§5.3). A denser gauge network in the
+   producing districts is worth building, because the station spread is spatially coherent and
+   would resolve real structure; until it exists, a documented convention should fix the product
+   by rule and price the residual uncertainty rather than pretend it away.
 
 ---
 
@@ -519,8 +548,14 @@ without the caveat in §5.2.
 of four products.** At 50 mm all four pay every field in the study area; at 100 mm the best
 product detects 83% of reference units while still paying 556 dry ones, and the four products
 disagree about who is paid at all (2, 0, 373, 578 units). CPC, on the coarsest grid, assigns
-reference and dry units the identical median total of 79.2 mm. **The
-water came from a levee failure, not from rain on the field.** The Pajaro crested at 32.10 ft at
+reference and dry units the identical median total of 79.2 mm — **and ground measurement says
+that is a resolution failure, not a modelling quibble. Fourteen CIMIS stations recorded between
+33.8 mm and 137.3 mm across the study area over the same six days, a factor of four, while CPC
+returned the same 79.2 mm at eight of them, Pajaro and Salinas included.** The station spread is
+spatially coherent — pairs within 15 km differ by 13.7 mm on average against 42.0 mm beyond
+50 km — so the variation the coarse grid erases is real rainfall, measured on the ground, and
+not instrument noise (§5.3). **The water itself came from a levee failure, not from rain on the
+field.** The Pajaro crested at 32.10 ft at
 Watsonville at 00:45 on 11 March; no amount of rainfall measured over a field explains which
 side of a failed levee it sat on.
 

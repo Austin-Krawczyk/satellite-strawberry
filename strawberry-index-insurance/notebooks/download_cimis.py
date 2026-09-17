@@ -46,7 +46,8 @@ WINDOWS = [
     ("event_march", "2023-03-09", "2023-03-14"),   # the event window, Step 4
     ("context_january", "2023-01-04", "2023-01-16"),  # the January event, second data point
 ]
-# Full calendar years at one station, for the units sanity check that caught the CPC error.
+# Full calendar years at every area station: the units sanity check that caught the CPC
+# error, and the test of whether the coarse products read low along the coast generally.
 SANITY_YEARS = [2022, 2023]
 
 
@@ -146,19 +147,21 @@ def main() -> None:
         write(f"daily_{label}.json", get(DATA_URL, params, key),
               f"day-precip, metric, stations {targets}, {start} to {end}", params, records)
 
-    # Sanity-check station: the active station closest to Watsonville/Pajaro by longitude order
-    # is chosen in the notebook; here we pull whichever active station is first in the list, and
-    # record which, so the annual totals can be compared with PRISM and Daymet at that point.
-    active = [s for s in near if s.get("IsActive") in (True, "True", "true")]
-    sanity = (active or near)[0]
+    # Full calendar years at EVERY station in the area, not just one. A single station cannot
+    # distinguish a real coastal bias in the coarse products from one unrepresentative site
+    # inside a 50 km cell. Chunked to stay under the 1,750-record limit (stations x days).
+    nbrs = [str(s["StationNbr"]) for s in near]
+    per_request = max(1, MAX_RECORDS // 366)          # 4 stations x 366 days = 1,464 records
     for year in SANITY_YEARS:
-        print(f"daily precipitation, station {sanity['StationNbr']} calendar {year} ...")
-        params = {"stationNbrs": str(sanity["StationNbr"]),
-                  "startDate": f"{year}-01-01", "endDate": f"{year}-12-31",
-                  "isHourly": "false", "unitOfMeasure": "M", "dataItems": "day-precip"}
-        write(f"daily_sanity_{sanity['StationNbr']}_{year}.json", get(DATA_URL, params, key),
-              f"day-precip, metric, station {sanity['StationNbr']} ({sanity['Name']}), {year}",
-              params, records)
+        for i in range(0, len(nbrs), per_request):
+            chunk = nbrs[i:i + per_request]
+            print(f"daily precipitation, calendar {year}, stations {','.join(chunk)} ...")
+            params = {"stationNbrs": ",".join(chunk),
+                      "startDate": f"{year}-01-01", "endDate": f"{year}-12-31",
+                      "isHourly": "false", "unitOfMeasure": "M", "dataItems": "day-precip"}
+            write(f"daily_annual_{year}_{i // per_request:02d}.json", get(DATA_URL, params, key),
+                  f"day-precip, metric, stations {','.join(chunk)}, calendar {year}",
+                  params, records)
 
     lines = [
         "# CIMIS station data — provenance",
