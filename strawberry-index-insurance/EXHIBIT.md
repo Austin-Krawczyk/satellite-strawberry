@@ -368,9 +368,13 @@ each product against each station for both windows.
 | 22 Mar | 11 | 5 | 0.1% | **0.0%** | **0.0%** |
 | 25 Mar | 14 | 7 | 90.7% | 100.0% | 100.0% |
 
-**No Sentinel-2 acquisition exists at all for 11–14 March**, when water was at its peak, and
-the valleys were 0% clear on 12, 17 and 22 March. The first usable optical view of the flood is
-four days late.
+**No usable optical observation of the valleys exists for 11–14 March**, when water was at its
+peak. There was no acquisition at all on 11, 13 or 14 March; the one acquisition in that window,
+on 12 March, was **0% clear over both valleys** (2.2% over the wider study area), and the valleys
+were 0% clear again on 17 and 22 March. The first usable optical view of the flood is four days
+late. The cloud is not bad luck: the storm that produced the flood is the same system that
+covered it, so optical blindness is **correlated with the peril by construction** rather than
+independent of it.
 
 **Radar.** Five Sentinel-1 acquisitions between 1 February and 31 March cover ≥95% of the units
 (11 and 23 February, 7, 19 and 31 March). The **longest gap over the unit area is 12 days, and

@@ -16,8 +16,8 @@ governs everything below: these results measure flood detection, not loss predic
 
 **What was found.** The design failed, for three independent reasons, none of which is a
 threshold that could be retuned. First, no usable imagery existed when the water was at its
-peak: there was no Sentinel-2 acquisition at all for 11–14 March, and no radar pass covering
-the fields between 7 and 19 March. Second, the gate missed the fields it most needed to catch.
+peak: the only Sentinel-2 acquisition between 11 and 14 March was entirely cloud-covered over
+both valleys, and no radar pass covered the fields between 7 and 19 March. Second, the gate missed the fields it most needed to catch.
 Of the 18 fields the reference places in standing water, the radar gate fired on 3 and the NDVI
 gate on 3. Fifteen fields at 95–100% inundation carried a radar flooded fraction of exactly
 zero, because plastic mulch is radar-dark and flooding therefore *raises* backscatter on these

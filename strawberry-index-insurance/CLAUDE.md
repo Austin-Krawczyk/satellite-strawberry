@@ -154,8 +154,11 @@ step.** With `COPERNICUS/S2_SR_HARMONIZED` and Cloud Score+ masking (`cs_cdf` > 
 1. **Acquisition table**, a standalone result for the exhibit: every Sentinel-2 acquisition
    over the study area from March 11 to March 25, 2023, with the clear-pixel fraction for
    the study area, for the Pajaro and northern Salinas valleys, and for the lower Pajaro
-   Valley. It shows that no optical observation exists for March 11–14, when water was at
-   its peak, and that the valleys were 0% clear on March 12 and 17. This is the
+   Valley. It shows that no *usable* optical observation of the valleys exists for March 11–14,
+   when water was at its peak — no acquisition at all on March 11, 13 or 14, and the March 12
+   acquisition 0% clear over both valleys — and that the valleys were 0% clear again on March 17
+   and 22. **Do not write that no acquisition exists for March 11–14; the table shows five scenes
+   on March 12.** The distinction is acquisition versus usable view (corrected 2026-09-17). This is the
    sensor-availability argument for SAR, stated in our own data rather than asserted.
 2. **Water mask per date** for March 15, 20 and 25, 2023: NDWI = (B3 − B8)/(B3 + B8) and
    MNDWI = (B3 − B11)/(B3 + B11), compared against a pre-event baseline composite
@@ -425,7 +428,8 @@ Mirror how RMA justified FIP-SI and HIP-WI. Sections, in order:
    Step 1c optical reference: the first clear Sentinel-2 pass is several days after the
    March 10–11 peak, so water has partly receded and the reference under-counts flooded
    area, which biases against this method rather than for it; cloud cover during the peak
-   is why no optical observation exists at maximum inundation; and the reference is a
+   is why no usable optical observation exists at maximum inundation (an acquisition on
+   March 12 exists but is 0% clear over the valleys); and the reference is a
    water mask derived here, not a surveyed extent, so it carries its own error.
    State that there is no field-level loss data: units can be classified flooded or not, never
    lost or not; the 1,919-acre county figure is an aggregate from a voluntary survey with no
@@ -495,7 +499,8 @@ Mirror how RMA justified FIP-SI and HIP-WI. Sections, in order:
    **The specified design — a rainfall trigger confirmed by a radar flood mask — therefore did not
    work on California strawberries for this event.** Two mechanisms explain part of the failure and
    are secondary to the measurement above. First, no usable imagery existed at peak inundation from
-   either sensor: no optical acquisition at all for March 11–14, and no radar pass covering the
+   either sensor: no usable optical view of the valleys for March 11–14 (no acquisition on 11,
+   13 or 14 March, and the 12 March acquisition 0% clear over the valleys), and no radar pass covering the
    units between March 7 and March 19. Second, plastic mulch makes mulched beds radar-dark, so
    flooding raises rather than lowers backscatter and the specified mask cannot fire at any
    threshold. **The mulch mechanism explains the radar failure but not the NDVI failure.** Both are
