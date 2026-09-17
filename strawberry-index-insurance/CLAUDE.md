@@ -43,8 +43,8 @@ has not been shared.
 2. `figures/` — the six figures in §7.
 3. `data/derived/` — the per-unit table (§6, step 6) as CSV.
 4. `EXHIBIT.md` — structured like an FCIC feasibility exhibit (§8). **Length, revised
-   2026-09-16, after Step 4b, and again on 2026-09-17 after the RMA tabulation:** approximately
-   8,150 words with ten tables, five of them mandatory (the four-cell tables, the 18-unit
+   2026-09-16, after Step 4b, and again on 2026-09-17 after the RMA tabulation and the
+   inclusion-threshold sensitivity:** approximately 8,550 words with eleven tables, five of them mandatory (the four-cell tables, the 18-unit
    reference table, the optical acquisition table, the radar coverage table and the dataset
    table; the rest carry the NDVI timing comparison, the rainfall event totals, the mulch
    comparison, the basis-risk rates and the Step 4b station comparison), rendering to about
@@ -446,6 +446,11 @@ Mirror how RMA justified FIP-SI and HIP-WI. Sections, in order:
    everywhere at any threshold — which is a plausible-sounding statement about grid resolution that
    was really a units mistake. Anyone building an index on gridded inputs should cross-check
    products against each other and against physical plausibility before trusting any of them.
+   **Inclusion-threshold sensitivity (added 2026-09-17):** §5 must report gate detection against
+   at least three definitions of "flooded" — the 30% spec default, an intermediate, and any
+   detected water — with unit counts, acreage and each gate's firing count, so a reviewer can see
+   whether the 18-unit reference set flatters the gate. Measured: detection **falls** from 33% on
+   18 units to 17% on 54, so the reference-set figure is the gate's best case.
    **The RMA record (added 2026-09-17):** the cause-of-loss file reports **insured** losses
    only, and only rows where a loss was paid, so it shows neither insured acreage nor
    participation; its near-emptiness for strawberries must not be read as evidence that the

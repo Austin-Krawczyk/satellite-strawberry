@@ -5,7 +5,7 @@
 Prepared for USDA RMA, Davis Regional Office, and Agralytica.
 Study area: Monterey (06053) and Santa Cruz (06087) counties, California.
 
-*Analysis by Austin Krawczyk, UC Davis, 16 September 2026. Repository:
+*Analysis by Austin Krawczyk, UC Davis, 16–17 September 2026. Repository:
 https://github.com/Austin-Krawczyk/CROPCZYK (private; access on request). All inputs are public
 datasets except the aggregate loss figures in `docs/ground_truth_aggregate.md`, which were
 supplied by the author and are used only as order-of-magnitude checks.*
@@ -252,6 +252,24 @@ detected **standing water, not crop damage**: once the water drained, the canopy
 unchanged. The March event is also invisible in the units' water-year NDVI trajectory, which
 rises from 0.146 in October 2022 to a peak of 0.689 in August 2023 with no March disturbance.
 
+**Does the gate look better on a larger flooded set?** The 18 reference units are 270 acres,
+14% of the 1,919 acres the county reported lost, so it is fair to ask whether a more inclusive
+definition — one that covers more of the county figure — flatters the gate. It does the
+opposite:
+
+| inclusion rule | units | acres | % of 1,919 ac | radar fires | NDVI fires | either | detection |
+|---|---|---|---|---|---|---|---|
+| ≥ 30% inundated (spec default) | 18 | 270 | 14.1% | 3 | 3 | 6 | **33%** |
+| ≥ 10% inundated | 30 | 564 | 29.4% | 6 | 4 | 9 | 30% |
+| any detected water (≥ 0.01%) | 54 | 1,123 | 58.5% | 6 | 4 | 9 | **17%** |
+
+**Detection falls from 33% to 17% as the set widens**, because the units added by relaxing the
+threshold are the partly flooded ones and the gate catches almost none of them — the absolute
+count moves from 6 to 9 across a set three times the size. The mechanism reappears intact: on
+the 54-unit set the radar gate fired on 6 of the 7 units where VV fell and **0 of the 47 where
+it rose**. So the 33% on the reference set is the gate's **best case, not a threshold artefact**,
+and the more of the county's reported loss the set covers, the worse the gate looks.
+
 **Figure 2** — Sentinel-1 pre, post and mask. **Figure 3** — ΔNDVI map with the
 clear-observation inset. Supplementary figures cover the mulch confound, the confound tests,
 the reference units and the NDVI trajectory.
@@ -271,8 +289,8 @@ For the same field the four products disagree by a **median of 28.5 mm**, 57.3 m
 percentile and 100.0 mm at most. That spread is comparable to the 25 mm spacing between the
 tested thresholds, so **the choice of rainfall product moves the outcome as much as the choice
 of trigger level.** That is a rating problem, independent of basis risk: two insurers using
-different reanalyses would price and pay differently on identical fields. It is also
-unverified in absolute terms, because the CIMIS station check was not obtained.
+different reanalyses would price and pay differently on identical fields. And the ground
+network cannot referee the disagreement, as the station check below shows.
 
 **CPC, whose grid is the closest of the four to the one PRF's Rainfall Index uses, takes only
 five distinct values across all 1,320 fields** at its 0.5° (~50 km) cell size, and gives the reference units and the dry
@@ -421,6 +439,13 @@ million), against grapes at \$73.1 million. The cause-of-loss file lists only ro
 was paid, so it cannot measure participation directly — but a peril that destroyed 1,919 acres
 while generating two claims is not a peril the federal book is currently carrying.
 
+**Three explanations fit that gap and this data cannot choose between them:** growers here may
+largely not buy the coverage, which would be consistent with the low uptake in the strawberry
+programme that RMA's Davis office has described; losses may have fallen below deductibles on the
+policies that do exist; or they may have been indemnified under other plans or crop codes and so
+not appear under Strawberries. Nothing in the cause-of-loss file distinguishes these, and the
+choice matters for product design, so it is stated as an open question rather than resolved.
+
 For the wider picture, excess moisture and flood across **all** commodities in these counties
 total \$4.81 million over ten years, **4.9%** of insured loss, behind fire (\$35.2 million) and
 heat (\$19.0 million). 2023 is the peak wet year at \$2.99 million, 20.0% of that year's total.
@@ -469,7 +494,8 @@ risk could be quoted to a grower.
 the gap is accounted for by cloud (571 of the 1,320 units, 30% of unit acreage, had no clear
 optical view on 15 March, so they could not be classified either way), by the 30% inundation
 threshold for inclusion (relaxing it to any detected water raises the set to 54 units and
-1,123 acres, 58% of the county figure), and by the 615 sequence B and C fields, 7,536 acres,
+1,123 acres, 58% of the county figure — on which the gate does *worse*, not better, §5.2), and
+by the 615 sequence B and C fields, 7,536 acres,
 that sit outside the sequence A unit set entirely. The
 1,919-acre March strawberry figure (Monterey County Agricultural Commissioner, 2023-05-12) is a
 county aggregate from a voluntary survey with no map, and the "roughly one fifth of farms"
@@ -582,7 +608,9 @@ and it is the cheapest next test in this whole programme.
 18 units the reference places in standing water on 15 March, the radar gate fires on 3, the
 NDVI gate on 3, and either on 6. Fifteen units at 95–100% inundation carry a radar flooded
 fraction of exactly 0.000 and NDVI changes of −0.02 to −0.11 against a −0.15 trigger (§5.2, full
-table). The mechanism is mulch: **the radar gate fired on all 3 units where VV fell and on none
+table). **That 33% is the gate's best case, not an artefact of a strict inclusion rule:** widen
+the flooded set to any detected water — 54 units, 58% of the county's reported acreage — and
+detection falls to 17% (§5.2). The mechanism is mulch: **the radar gate fired on all 3 units where VV fell and on none
 of the 15 where it rose.** Plastic mulch is radar-dark, so flooding raises backscatter rather
 than lowering it, and the specified mask cannot fire at any threshold. The mulch mechanism
 explains the radar failure **but not the NDVI failure**, which is the decay described above. The

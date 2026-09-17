@@ -1,0 +1,4 @@
+inclusion rule,units,acres,"% of 1,919 ac",radar fires,NDVI fires,either,detection rate
+>= 30% inundated (spec default),18,270.3788063120158,14.089567811986232,3,3,6,0.3333333333333333
+>= 10% inundated,30,563.7227508108788,29.375859865079665,6,4,9,0.3
+any detected water (>= 0.01%),54,1122.665193172763,58.50261559003455,6,4,9,0.16666666666666666

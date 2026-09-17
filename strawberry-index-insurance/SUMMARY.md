@@ -1,6 +1,6 @@
 # Satellite-confirmed rainfall index for California strawberries — summary
 
-*Austin Krawczyk, UC Davis, 16 September 2026. Prepared for USDA RMA, Davis Regional Office,
+*Austin Krawczyk, UC Davis, 16–17 September 2026. Prepared for USDA RMA, Davis Regional Office,
 and Agralytica. Full analysis in `EXHIBIT.md`.*
 
 **What was tested.** The design under examination holds rainfall as the insurable event and uses
@@ -34,17 +34,29 @@ What the imagery detected was standing water, and once the water drained the can
 unchanged — the signal decays to 1 field in 18 within two weeks, and the event is invisible in
 the crop's seasonal growth curve. The gate therefore confirmed *inundation*, which the weather
 trigger already implies, rather than *damage*, which it never saw. A gate that only re-detects
-the hazard adds verification cost without adding information about loss, and that holds for any
-peril where the visible signal is the hazard itself rather than its effect on the crop. Against
-this, the two designs fail in opposite directions rather than trading off usefully: rainfall
-alone pays nearly every field or almost none, and adding the gate caps detection at 33% because
-it finds only 6 of the 18 flooded fields on its own. A second practical finding: checked against fourteen CIMIS
-ground stations, no one product proved more accurate than the others — their errors against the
-stations are as large as their disagreement with each other, so the choice of rainfall product
-cannot currently be settled by evidence and has to be fixed by convention and priced. The
+the hazard adds verification cost without adding information about loss. Whether that extends to
+other perils whose visible signature is the hazard itself rather than its effect on the crop is
+a proposition worth testing, not something this one event establishes; the exhibit says what
+would confirm or refute it. Against this, the two designs fail in opposite directions rather
+than trading off usefully: rainfall alone pays nearly every field or almost none, and adding the
+gate caps detection at 33%, because it finds only 6 of the 18 flooded fields on its own — and
+that 33% is its best case, since widening the flooded set to cover 58% of the county's reported
+acreage drops detection to 17%. A second practical finding: checked against fourteen CIMIS
+ground stations, no one rainfall product proved more accurate than the others — their errors
+against the stations are as large as their disagreement with each other, so the choice of
+product cannot currently be settled by evidence and has to be fixed by convention and priced.
+The third finding is the one most likely to shape a decision. Across crop years 2015 to 2024 the
+entire federal cause-of-loss record for strawberries in these two counties is **two claims, both
+from this March 2023 event, totalling \$497,559 paid** — against the 1,919 acres and \$160
+million the county reported lost in the same event, and with no strawberry record at all for
+Santa Cruz in ten years. That cuts both ways and should be read both ways: it is what a
+protection gap looks like, and it is presumably why RMA is asking; but it also means **there is
+no local insured loss experience to rate a product against**, so rating would have to borrow
+from other districts or from non-insurance records. It is not evidence that the peril is rare —
+the file lists only paid losses, so it shows neither insured acreage nor participation. The
 constructive conclusion is that this event is the wrong test for a rainfall index and the right
-test for a **river stage trigger** —
-gauge stage is observed hourly, has a long record, and is causally upstream of the damage. One
-reusable result came out of the failure: before any flooding, mulched strawberry beds read as
-majority open water to radar about two and a half times as often as neighbouring lettuce fields,
-which is worth knowing to anyone attempting radar monitoring of mulched specialty crops.
+test for a **river stage trigger** — gauge stage is observed hourly, has a long record, and is
+causally upstream of the damage. One reusable result came out of the failure: before any
+flooding, mulched strawberry beds read as majority open water to radar about two and a half
+times as often as neighbouring lettuce fields, which is worth knowing to anyone attempting radar
+monitoring of mulched specialty crops.
