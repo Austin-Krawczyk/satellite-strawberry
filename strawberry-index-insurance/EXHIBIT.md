@@ -61,6 +61,7 @@ Latency is given in the weakness column where it constrains operational use.
 | River stage and discharge | USGS sites 11159000, 11159500, 11152500 | USGS | point | 1939– | ~1-hour latency, the fastest input here. Three gauges only. |
 | Insured loss history | RMA Summary of Business, Cause of Loss (`colsom_2015`–`colsom_2024`) | USDA RMA | county | 1989– | Published annually. **Insured** losses only, and only rows where a loss was paid: it shows neither insured acreage nor participation, so absence of records is not absence of loss (§5.6). |
 | Rain, ground stations | CIMIS station `day-precip` (Web API) | CA DWR | point | 1982– | ~1-day latency. 14 reporting stations in and near the study area; none on a strawberry field, nearest 0.2 km from a unit (§5.3). Interface changed mid-2026 — see the reproducibility note below. |
+| Commercial imagery (search only) | Planet PSScene (Data API catalogue) | Planet | 3 m | 2016– | Near-daily revisit, but the same cloud. **Search metadata only:** this project holds no asset entitlement, so cloud figures are scene-wide and no imagery was evaluated (§5.4, §7). |
 | Counties | `TIGER/2018/Counties` | US Census | — | — | — |
 
 **Reproducibility note on CIMIS.** The legacy CIMIS Web API (`/api/data` and `/api/station`,
@@ -392,7 +393,22 @@ than this event did** — but not a better optical one, because cloud at a flood
 not constellation design.
 
 Together these are the operational constraint on any imagery-confirmed trigger: at peak
-inundation, the state the gate is supposed to verify, **neither sensor could see the fields.**
+inundation, the state the gate is supposed to verify, **neither free public sensor could see the
+fields.**
+
+**A commercial constellation could, two days later (Step 1d).** The free public record has no
+usable optical observation of the valleys until **15 March, four days after the peak**.
+PlanetScope acquired over the valleys on **11, 12 and 13 March**, so it is not subject to the
+same revisit constraint — but it was subject to the same cloud. On 11 and 12 March every scene
+covering more than half the breach area was **90-99% cloud scene-wide**, while those days'
+clearest scenes (71% and 19% cloud) covered **none** of it. The first scene to both cover the breach area and carry a workable
+cloud fraction is **13 March, 18:00:45Z: 22% cloud, covering 91% of the lower Pajaro Valley and
+15 of the 18 reference units** — two days after the peak rather than four. **The constraint on an
+imagery-confirmed trigger is therefore partly cost and access, not purely physics.** This project
+could not evaluate that imagery: the account holds no asset entitlement, so only catalogue
+metadata and ~78 m/px previews were available, and **nothing here establishes that the commercial
+scene would have resolved the flood on these fields.** A supplementary figure shows the previews
+with the units overlaid.
 
 ### 5.5 The mulch mechanism, and what it is worth on its own
 
@@ -546,6 +562,15 @@ not do is validate the products over the fields.** Fourteen stations is a sparse
 of them sits on a strawberry field, and their errors against the products are as large as the
 products' disagreement with each other, so absolute accuracy is established at a handful of
 points and nowhere else.
+
+**Clipped cloud cover over the units could not be produced for the commercial imagery.**
+Planet's catalogue search returns cloud, clear and visible percentages computed **scene-wide**,
+over an area far larger than the 59.4 km² of strawberry fields, and the scene-wide figure is not
+the number that decides whether a usable observation exists over the units. The clipped figure
+requires the `ortho_udm2` usable-data mask, which is an asset download the account has no
+entitlement for. Every PlanetScope cloud figure in §5.4 is therefore scene-wide, and the Step 1d
+check establishes which scenes **covered** the breach area, not how much of each field was clear
+within them.
 
 **Other limits.** Cloud at the flood peak and 12-day radar revisit (§5.4). Mulch and bare-soil
 confounds (§5.5). At 10–30 m a pixel spans several raised beds, so no result here is bed-level,
