@@ -116,7 +116,7 @@ These are not fine print. Quoting the figures without them will misrepresent the
 ```
 strawberry-index-insurance/
   SUMMARY.md            one page, three paragraphs
-  EXHIBIT.md            the full exhibit, FCIC-style, ~8,500 words
+  EXHIBIT.md            the full exhibit, FCIC-style, ~9,200 words
   CLAUDE.md             the project specification and source of truth for scope
   SPEC_CHANGELOG.md     every scope change, dated, with its reasoning
   requirements.txt      pinned versions (Python 3.11)
@@ -127,7 +127,7 @@ strawberry-index-insurance/
   docs/                 aggregate loss figures used only as sanity checks
 ```
 
-Notebooks run in name order: `01` units → `01c` optical flood reference → `02` Sentinel-1 →
+Notebooks run in name order: `01` units → `01c` optical flood reference → `01d` PlanetScope search → `02` Sentinel-1 →
 `02b`/`02c` mulch and confound tests → `03`/`03b` NDVI → `04`/`04b` rainfall and the station
 check → `05` RMA loss history → `06` trigger logic and the four-cell tables.
 
@@ -147,6 +147,8 @@ provenance and SHA-256 recorded:
 - `notebooks/download_dwr_crop_mapping.py` — DWR / Land IQ crop map (defines the fields)
 - `notebooks/download_rma_col.py` — RMA Summary of Business, Cause of Loss
 - `notebooks/download_cimis.py` — CIMIS station precipitation
+
+`notebooks/01d_planetscope_check.ipynb` also queries Planet's catalogue, which needs a `PL_API_KEY` in the same gitignored `.env`. It performs a search only: no imagery was ordered or downloaded, and the account used holds no asset entitlement.
 
 **The CIMIS script needs a personal app key**, which is not in this repository and must not be.
 Put it in a gitignored `.env` as `CIMIS_APP_KEY=...`; the script sends it as an HTTP header and
