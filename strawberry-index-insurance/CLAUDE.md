@@ -43,8 +43,9 @@ has not been shared.
 2. `figures/` — the six figures in §7.
 3. `data/derived/` — the per-unit table (§6, step 6) as CSV.
 4. `EXHIBIT.md` — structured like an FCIC feasibility exhibit (§8). **Length, revised
-   2026-09-16, after Step 4b, and again on 2026-09-17 after the RMA tabulation and the
-   inclusion-threshold sensitivity:** approximately 8,550 words with eleven tables, five of them mandatory (the four-cell tables, the 18-unit
+   2026-09-16, after Step 4b, on 2026-09-17 after the RMA tabulation and the
+   inclusion-threshold sensitivity, and on 2026-09-20 after Step 1d:** approximately 9,200 words
+   with twelve tables, five of them mandatory (the four-cell tables, the 18-unit
    reference table, the optical acquisition table, the radar coverage table and the dataset
    table; the rest carry the NDVI timing comparison, the rainfall event totals, the mulch
    comparison, the basis-risk rates and the Step 4b station comparison), rendering to about

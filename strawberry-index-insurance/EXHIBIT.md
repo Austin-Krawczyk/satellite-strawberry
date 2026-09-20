@@ -399,11 +399,24 @@ fields.**
 **A commercial constellation could, two days later (Step 1d).** The free public record has no
 usable optical observation of the valleys until **15 March, four days after the peak**.
 PlanetScope acquired over the valleys on **11, 12 and 13 March**, so it is not subject to the
-same revisit constraint — but it was subject to the same cloud. On 11 and 12 March every scene
-covering more than half the breach area was **90-99% cloud scene-wide**, while those days'
-clearest scenes (71% and 19% cloud) covered **none** of it. The first scene to both cover the breach area and carry a workable
-cloud fraction is **13 March, 18:00:45Z: 22% cloud, covering 91% of the lower Pajaro Valley and
-15 of the 18 reference units** — two days after the peak rather than four. **The constraint on an
+same revisit constraint — but it was subject to the same cloud. The first scene to both cover the
+breach area and carry a workable cloud fraction is **13 March, 18:00:45Z: 22% cloud, covering 91%
+of the lower Pajaro Valley and 15 of the 18 reference units** — two days after the peak rather
+than four. **The gain is revisit, not cloud penetration:** the commercial constellation got a
+usable look sooner because it passed more often, not because it saw through anything the free
+sensors could not.
+
+**Scene-wide cloud metadata is misleading for this purpose, and that is the more transferable
+finding.** Coverage of the flooded ground and freedom from cloud came apart on precisely the two
+days that mattered. On 11 and 12 March **every scene covering more than half the breach area was
+90–99% cloud**, while those days' **clearest scenes — 71% and 19% cloud — covered none of it**:
+the clear imagery was over inland and southern ground, because the cloud was sitting on the
+Pajaro Valley. A reviewer assessing imagery availability from catalogue metadata alone would
+have found low-cloud scenes on both dates and concluded that a usable observation of the flooded
+fields existed. It did not. **Any evaluation of an imagery-confirmed trigger must therefore
+intersect scene footprints with the insured fields before reading cloud figures at all**, and
+must treat a scene-wide percentage as a property of the scene rather than of the ground in
+question — a caution about method, not a fact about this event. **The constraint on an
 imagery-confirmed trigger is therefore partly cost and access, not purely physics.** This project
 could not evaluate that imagery: the account holds no asset entitlement, so only catalogue
 metadata and ~78 m/px previews were available, and **nothing here establishes that the commercial
@@ -570,7 +583,12 @@ the number that decides whether a usable observation exists over the units. The 
 requires the `ortho_udm2` usable-data mask, which is an asset download the account has no
 entitlement for. Every PlanetScope cloud figure in §5.4 is therefore scene-wide, and the Step 1d
 check establishes which scenes **covered** the breach area, not how much of each field was clear
-within them.
+within them. The coverage percentages themselves are **measured, not visual impressions**: the
+thumbnails carry no georeferencing, so the rendering model — north-up over the scene bounding
+box with a cos(latitude) aspect correction — was validated against the rendered image quad to
+**3–4 pixels** before any overlay was computed. What the previews cannot support is anything
+further: at roughly **78 m per pixel** they show whether the valley was under cloud, and nothing
+about flood extent, field boundaries or crop condition can be read from them.
 
 **Other limits.** Cloud at the flood peak and 12-day radar revisit (§5.4). Mulch and bare-soil
 confounds (§5.5). At 10–30 m a pixel spans several raised beds, so no result here is bed-level,
