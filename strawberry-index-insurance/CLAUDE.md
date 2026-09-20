@@ -117,6 +117,17 @@ unavailable, stop and report it.
   per request. Raw JSON in `data/raw/cimis/` with `SOURCE.md`. **The app key is a personal
   credential:** read from `CIMIS_APP_KEY`, the gitignored `.env`, or the gitignored
   `data/raw/cimis/APP_KEY`; never printed, never committed.
+- **PlanetScope imagery** (Planet Data API, §6 Step 1d, added 2026-09-20): catalogue search
+  over the valleys for 10–20 March 2023, item type **PSScene**. Quick search is
+  `POST https://api.planet.com/data/v1/quick-search`; authentication is **HTTP basic auth with
+  the API key as the username and an empty password**. Quota endpoints are
+  `GET https://api.planet.com/auth/v1/experimental/public/my/subscriptions` (fields `quota_sqkm`,
+  `quota_used`) and `GET https://api.planet.com/account/v1/quota-reservations/`. Verified by probe
+  2026-09-20, not assumed. **The API key is a personal credential:** read from `PL_API_KEY` in the
+  environment or the gitignored `.env`, sent only as basic auth, never printed, never written into
+  a notebook cell or a saved response, never placed in a URL. **Never POST to
+  `/quota-reservations/` or `/bulk-reserve`:** those reserve or consume quota. Search, activation
+  and ordering are separate actions and **no imagery may be ordered without explicit approval.**
 - **Flood extent reference** for March 2023: any published inundation map (FEMA,
   USGS, Cal OES, Monterey County, or a Copernicus EMS activation if one exists).
   Record source and date. If none is found, record that.
@@ -181,6 +192,30 @@ step.** With `COPERNICUS/S2_SR_HARMONIZED` and Cloud Score+ masking (`cs_cdf` > 
 This is the independent ground truth reference for Step 2.
 CHECKPOINT: the figure, the acquisition table and the threshold sensitivity. Stop before
 Step 2.
+
+**Step 1d — PlanetScope peak-inundation check (added 2026-09-20). An addition only.**
+**Do not modify the Step 1c optical reference or any Step 2 result.** The Sentinel-2-only
+reference stays as built so the radar comparison remains independent.
+Purpose: our Sentinel-2 record has no usable view of the valleys for 11–14 March 2023. If
+PlanetScope has a clear view in that window it would be the only optical observation of this
+flood near its peak, and it tests two things the current reference cannot — whether the radar
+gate missed fields **visibly under water at the time**, and whether **3 m resolution separates
+plastic mulch from standing water**, since at 10 m a pixel spans several raised beds.
+- Search PSScene over the lower Pajaro Valley and northern Salinas Valley for 10–20 March 2023,
+  using the same AOI boxes as Step 1c. Per scene report acquisition date and **UTC time**, item
+  type, scene-wide cloud cover, usable data percentage, quality category, and the share of the
+  1,320 units the footprint covers (both count and unit-area fraction).
+- **Scene-wide cloud is not the deciding number.** It is computed over an area far larger than
+  our 59.4 km² of fields. The clipped figure requires the `ortho_udm2` usable-data mask, which is
+  an asset download; state plainly when it cannot be produced rather than substituting the
+  scene-wide value for it.
+- **Check the account's entitlement and quota before proposing any download**, report what a
+  proposed download would consume, and **order nothing without explicit approval.**
+- **If no scene in 11–14 March is usable over the units, record that as a finding, not a gap:**
+  it would mean even near-daily commercial 3 m imagery could not observe this event, which
+  strengthens the sensor-availability conclusion in §8 item 5.
+CHECKPOINT: the scene table, the coverage of the units, and the access verdict. Stop before any
+activation, order or download.
 
 **Step 2 — Sentinel-1 flood mask.**
 Pre window: Feb 1–Mar 8, 2023. Post window: Mar 11–20, 2023. IW mode, **VV and VH**, one
