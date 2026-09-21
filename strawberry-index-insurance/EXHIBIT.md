@@ -6,7 +6,7 @@ Prepared for USDA RMA, Davis Regional Office, and Agralytica.
 Study area: Monterey (06053) and Santa Cruz (06087) counties, California.
 
 *Analysis by Austin Krawczyk, UC Davis, 16–17 September 2026. Repository:
-https://github.com/Austin-Krawczyk/CROPCZYK (private; access on request). All inputs are public
+https://github.com/Austin-Krawczyk/satellite-strawberry (public). All inputs are public
 datasets except the aggregate loss figures in `docs/ground_truth_aggregate.md`, which were
 supplied by the author and are used only as order-of-magnitude checks.*
 
