@@ -10,3 +10,6 @@ matplotlib==3.10.9
 folium==0.20.0
 requests==2.34.2
 jupyter==1.1.1
+# Added 2026-09-22: Windows Application Control blocks pyogrio's GDAL DLL, which leaves
+# geopandas with no working file reader. Every gpd.read_file here passes engine="fiona".
+fiona==1.10.1

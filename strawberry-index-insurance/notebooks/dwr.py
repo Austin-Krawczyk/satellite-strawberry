@@ -2,9 +2,9 @@
 in the water-year crop sequence. Definitions follow the DWR metadata; see 01b_dwr_check."""
 import warnings
 
+import geopandas as gpd
 import numpy as np
 import pandas as pd
-import pyogrio
 
 from common import GRID_CRS, RAW
 
@@ -37,7 +37,10 @@ def load_fields(year, counties):
     where = "COUNTY IN (%s)" % ", ".join(f"'{c}'" for c in counties)
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", message=".*Measured.*")
-        g = pyogrio.read_dataframe(DWR_DIR / zf, layer=lyr, where=where, columns=cols)
+        # engine="fiona": pyogrio's GDAL DLL is blocked by Windows Application Control
+        # on the project machine, which leaves geopandas with no working reader.
+        g = gpd.read_file(DWR_DIR / zf, layer=lyr, where=where, columns=cols,
+                          engine="fiona")
     return g.set_geometry(g.geometry.force_2d()).to_crs(GRID_CRS)
 
 
